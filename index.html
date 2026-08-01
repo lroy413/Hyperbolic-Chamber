@@ -21,10 +21,20 @@
     --bg:#0e1015;--panel:#161922;--panel2:#1d212c;--panel3:#232838;--ink:#e9ebf1;--muted:#98a1b2;
     --line:#2a2f3c;--accent:#7b61ff;--accent2:#22d3aa;--warn:#f0b429;--bad:#f2687f;--pill:#212636;--radius:16px;
     --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Times New Roman",serif;
+    --shadow:0 1px 2px rgba(0,0,0,.34),0 12px 28px -12px rgba(0,0,0,.62);
+    --shadow-h:0 2px 6px rgba(0,0,0,.4),0 20px 42px -14px rgba(0,0,0,.7);
+    --edge:inset 0 1px 0 rgba(255,255,255,.06);
+    --sheen:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 42%);
+    --glow:color-mix(in srgb,var(--accent) 26%,transparent);
   }
   @media (prefers-color-scheme: light){
     :root{--bg:#f4f6fa;--panel:#fff;--panel2:#f0f2f8;--panel3:#e8ecf5;--ink:#151a23;--muted:#5a6474;
-      --line:#e1e6ef;--accent:#6d4dff;--accent2:#12b58f;--warn:#b7791f;--bad:#d83a5a;--pill:#eef1f8;}
+      --line:#e1e6ef;--accent:#6d4dff;--accent2:#12b58f;--warn:#b7791f;--bad:#d83a5a;--pill:#eef1f8;
+      --shadow:0 1px 2px rgba(18,26,48,.06),0 14px 30px -14px rgba(18,26,48,.2);
+      --shadow-h:0 3px 8px rgba(18,26,48,.1),0 22px 44px -16px rgba(18,26,48,.28);
+      --edge:inset 0 1px 0 rgba(255,255,255,.9);
+      --sheen:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,0) 46%);
+      --glow:color-mix(in srgb,var(--accent) 20%,transparent);}
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -555,27 +565,27 @@ a.acclesson:hover{background:var(--panel2)}
 
 
 /* ---- theme overrides (Settings > Appearance) ---- */
-html[data-theme="light"]{--bg:#f4f6fa;--panel:#fff;--panel2:#f0f2f8;--panel3:#e8ecf5;--ink:#151a23;--muted:#5a6474;--line:#e1e6ef;--accent:#6d4dff;--accent2:#12b58f;--warn:#b7791f;--bad:#d83a5a;--pill:#eef1f8;}
-html[data-theme="dark"]{--bg:#0e1015;--panel:#161922;--panel2:#1d212c;--panel3:#232838;--ink:#e9ebf1;--muted:#98a1b2;--line:#2a2f3c;--accent:#7b61ff;--accent2:#22d3aa;--warn:#f0b429;--bad:#f2687f;--pill:#212636;}
+html[data-theme="light"]{--bg:#f4f6fa;--panel:#fff;--panel2:#f0f2f8;--panel3:#e8ecf5;--ink:#151a23;--muted:#5a6474;--line:#e1e6ef;--accent:#6d4dff;--accent2:#12b58f;--warn:#b7791f;--bad:#d83a5a;--pill:#eef1f8;--shadow:0 1px 2px rgba(18,26,48,.06),0 14px 30px -14px rgba(18,26,48,.2);--shadow-h:0 3px 8px rgba(18,26,48,.1),0 22px 44px -16px rgba(18,26,48,.28);--edge:inset 0 1px 0 rgba(255,255,255,.9);--sheen:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,0) 46%);--glow:color-mix(in srgb,var(--accent) 20%,transparent);}
+html[data-theme="dark"]{--bg:#0e1015;--panel:#161922;--panel2:#1d212c;--panel3:#232838;--ink:#e9ebf1;--muted:#98a1b2;--line:#2a2f3c;--accent:#7b61ff;--accent2:#22d3aa;--warn:#f0b429;--bad:#f2687f;--pill:#212636;--shadow:0 1px 2px rgba(0,0,0,.34),0 12px 28px -12px rgba(0,0,0,.62);--shadow-h:0 2px 6px rgba(0,0,0,.4),0 20px 42px -14px rgba(0,0,0,.7);--edge:inset 0 1px 0 rgba(255,255,255,.06);--sheen:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 42%);--glow:color-mix(in srgb,var(--accent) 26%,transparent);}
 /* top bar background follows the in-app theme toggle, not just the OS setting */
 html[data-theme="light"] .topbar{background:rgba(244,246,250,.9)}
 html[data-theme="dark"] .topbar{background:rgba(14,16,21,.9)}
 /* ---- slim topbar ---- */
 .topbar{padding:10px 16px}
 .topbar .in{display:flex;align-items:center;gap:12px;max-width:900px}
-.topbar .brand{font-weight:800;font-size:15px;color:var(--ink);text-decoration:none}
+.topbar .brand{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none}
 .topbar .brand span{color:var(--accent)}
 .tbback{font-weight:700;font-size:14.5px;color:var(--accent);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
 .tbspacer{flex:1}
 .gear{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px;text-decoration:none;border:1px solid var(--line);background:var(--panel)}
 .gear:hover{color:var(--accent);border-color:var(--accent)}
 /* ---- hamburger button ---- */
-.navbtn{width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;padding:0;flex:0 0 auto;transition:.15s}
+.navbtn{width:46px;height:46px;border-radius:13px;border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;padding:0;flex:0 0 auto;transition:.15s}
 .navbtn:hover{border-color:var(--accent)}
-.navbtn span{display:block;width:17px;height:2px;border-radius:2px;background:var(--ink);transition:.2s}
-.navbtn[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.navbtn span{display:block;width:22px;height:2.5px;border-radius:2px;background:var(--ink);transition:.2s}
+.navbtn[aria-expanded="true"] span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
 .navbtn[aria-expanded="true"] span:nth-child(2){opacity:0}
-.navbtn[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.navbtn[aria-expanded="true"] span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
 /* ---- slide-out drawer ---- */
 .navscrim{position:fixed;inset:0;background:rgba(6,8,12,.5);backdrop-filter:blur(2px);opacity:0;visibility:hidden;transition:.25s;z-index:60}
 .navscrim.open{opacity:1;visibility:visible}
@@ -603,7 +613,7 @@ html[data-theme="dark"] .topbar{background:rgba(14,16,21,.9)}
 body.navopen{overflow:hidden}
 /* ---- premium hero ---- */
 .hero2{text-align:center;padding:26px 4px 6px;background:radial-gradient(115% 90% at 50% -10%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 60%);border-radius:0 0 24px 24px;margin-bottom:6px}
-.hero2-h{font-family:var(--serif);font-weight:700;font-size:38px;line-height:1.1;letter-spacing:-.01em;margin:8px auto 12px;max-width:11ch}
+.hero2-h{font-family:var(--serif);font-weight:700;font-size:38px;line-height:1.12;letter-spacing:-.01em;margin:8px auto 12px;max-width:24ch;text-wrap:balance}
 .hero2-h .kw{color:var(--accent)}
 .hero2-sub{color:var(--muted);font-size:15.5px;line-height:1.55;max-width:44ch;margin:0 auto 20px}
 .searchwrap{position:relative;max-width:520px;margin:0 auto}
@@ -743,17 +753,17 @@ a.acclesson:hover{background:var(--panel2)}
 
 
 /* streak + goal card */
-.streakcard{display:flex;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 12px;margin:10px 0}
-.streakcard .stcell{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;min-width:0}
-.streakcard .stcell+.stcell{border-left:1px solid var(--line)}
-.flamewrap{opacity:.35;filter:grayscale(1)}
+.streakcard{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 14px;margin:10px 0}
+.streakcard .stcell{flex:1;display:flex;align-items:center;justify-content:center;gap:9px;min-width:0}
+.streakcard .stcell.stgoal{flex:1.7}
+.flamewrap{opacity:.35;filter:grayscale(1);flex:0 0 auto}
 .flamewrap.lit{opacity:1;filter:none}
-.stinfo{line-height:1.1;min-width:0}
-.stinfo b{font-size:22px;font-weight:800;display:block}
+.stinfo{line-height:1.15;min-width:0}
+.stinfo b{font-size:18px;font-weight:800;display:block;white-space:nowrap}
 .stinfo small{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap}
-.goalring{width:46px;height:46px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
-.goalring span{width:36px;height:36px;border-radius:50%;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
-@media(max-width:520px){.stinfo b{font-size:19px}.streakcard{padding:12px 8px}}
+.goalring{width:42px;height:42px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.goalring span{width:34px;height:34px;border-radius:50%;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+@media(max-width:520px){.stinfo b{font-size:16px}.streakcard{padding:14px 10px;gap:3px}}
 /* review prompt on dashboard */
 .reviewcard{display:flex;align-items:center;justify-content:space-between;gap:12px;border-radius:14px;padding:14px 16px;margin:10px 0;text-decoration:none;color:inherit;border:1px solid var(--line)}
 .reviewcard.due{background:linear-gradient(135deg,rgba(245,158,11,.16),rgba(242,104,127,.10));border-color:var(--warn)}
@@ -976,7 +986,7 @@ mark.hl:hover{background:rgba(242,104,127,.35)}
 .brand{display:inline-flex;align-items:center;gap:1px;font-weight:800;font-size:20px;letter-spacing:-.3px;color:var(--ink)}
 .brand .brandtext{color:var(--ink)}
 .oblogo{flex:0 0 auto;display:block}
-.obmark{height:1.12em;width:auto;display:inline-block;vertical-align:middle;margin-right:1px;position:relative;top:-.08em}
+.obmark{height:1.22em;width:auto;display:inline-block;vertical-align:middle;margin-right:2px;position:relative;top:-.08em}
 /* color-theme swatches in settings */
 .palrow{align-items:center}
 .swatches{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
@@ -989,6 +999,35 @@ html[data-palette="verdant"]{--accent:#16a34a;--accent2:#0d9488}
 html[data-palette="tide"]{--accent:#2563eb;--accent2:#06b6d4}
 html[data-palette="bloom"]{--accent:#d6409f;--accent2:#7c5cff}
 html[data-palette="classic"]{--accent:#5b8cff;--accent2:#31c48d}
+
+/* ===== depth pass: cards feel raised & lit ===== */
+.libcard,.stat,.streakcard,.reviewcard,.continue,.progresspanel,.pagecard,.panelcard,.modcard,.studytile,.storecard,.qlink,.navacct,.peekcard,.acctcard,.notecard,.revempty{
+  box-shadow:var(--edge),var(--shadow);
+}
+/* subtle top sheen only on solid-panel cards (skip ones with their own gradient) */
+.libcard,.stat,.streakcard,.reviewcard.caught,.progresspanel,.pagecard,.panelcard,.modcard,.studytile,.storecard,.qlink,.navacct,.peekcard,.acctcard,.notecard,.revempty{
+  background-image:var(--sheen);background-repeat:no-repeat;background-position:top;
+}
+/* interactive lift */
+.libcard,.studytile,.storecard,.qlink,.reviewcard,.continue,.navacct{transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.studytile:hover,.storecard:hover,.qlink:hover,.reviewcard:hover,.navacct:hover{transform:translateY(-2px);box-shadow:var(--edge),var(--shadow-h)}
+.libcard:hover{box-shadow:var(--edge),var(--shadow-h)}
+.contbtn,.btn,.rvbtn:not(.ghost){box-shadow:0 1px 2px rgba(0,0,0,.18),0 6px 16px -6px var(--glow)}
+
+/* ===== simulated hero light ===== */
+.hero2{position:relative}
+.hero2::before{content:"";position:absolute;top:-30px;left:50%;width:min(620px,112%);height:300px;transform:translateX(-50%);
+  background:radial-gradient(50% 58% at 50% 40%,var(--glow),transparent 72%);filter:blur(4px);pointer-events:none;z-index:0}
+.hero2>*{position:relative;z-index:1}
+/* elegant top-lit gradient on the display headline */
+.hero2-h{background:linear-gradient(180deg,var(--ink),color-mix(in srgb,var(--ink) 72%,var(--muted)));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;text-shadow:none}
+.hero2-h .kw{-webkit-text-fill-color:transparent;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 88%,#fff),var(--accent));-webkit-background-clip:text;background-clip:text}
+.landinghero h1{font-family:var(--serif);letter-spacing:-.01em}
+/* fallback: if background-clip:text is unsupported, keep the text visible */
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){
+  .hero2-h,.hero2-h .kw{-webkit-text-fill-color:currentColor;color:var(--ink);background:none}
+  .hero2-h .kw{color:var(--accent)}
+}
 
 </style></head>
 <body>
@@ -1776,7 +1815,7 @@ function renderLibrary(){
   // premium hero: headline + tagline + search + category chips
   var cats=[];a.forEach(function(c){var k=courseCategory(c);if(cats.indexOf(k)<0)cats.push(k);});
   h+='<section class="hero2">'
-    +'<h1 class="hero2-h">The cycle of <span class="kw">knowledge</span> never ends</h1>'
+    +'<h1 class="hero2-h">The cycle of<br><span class="kw">knowledge</span> never ends</h1>'
     +'<p class="hero2-sub">Premium courses for the endlessly curious. Learn deeply, think clearly, and keep growing — like the Ouroboros, wisdom feeds itself.</p>'
     +'<div class="searchwrap"><span class="searchico">'+IC.search+'</span><input id="coursesearch" class="searchinp" type="search" placeholder="Search courses, topics, instructors…" autocomplete="off" aria-label="Search courses"></div>';
   if(cats.length>1){
