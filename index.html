@@ -1076,6 +1076,17 @@ a.trow:hover{border-color:var(--accent)}
 .pctitle{font-family:var(--serif);font-size:24px;font-weight:800;margin:8px 0 4px}
 .pcbody{font-size:14px;color:var(--muted)}
 .pcdate{font-size:12.5px;color:var(--muted);margin-top:10px;font-weight:700}
+/* ---- library tabs + My Learning bits ---- */
+.libtabs{display:flex;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:5px;margin:6px 0 16px}
+.libtab{flex:1;text-align:center;padding:10px 12px;border-radius:9px;font-weight:800;font-size:14px;color:var(--muted);text-decoration:none;transition:.14s}
+.libtab.on{background:var(--panel);color:var(--ink);box-shadow:var(--edge),var(--shadow)}
+.libtab:not(.on):hover{color:var(--ink)}
+.libhero{padding-top:16px;padding-bottom:2px}
+.libhero .hero2-h{font-size:30px}
+@media(max-width:520px){.libhero .hero2-h{font-size:26px}}
+.libstoresub{text-align:left;margin:0 0 14px}
+.startcta .contbtn{background:var(--accent);color:#fff}
+.sugcard{cursor:pointer}
 
 
 /* Oboros wordmark + logo */
@@ -1943,8 +1954,8 @@ function drawerHTML(){
     +'<aside class="navdrawer" id="navdrawer" aria-hidden="true">'
     +'<div class="navhead">'+brandHTML()+'<button class="navclose" id="navclose" aria-label="Close menu">'+IC.close+'</button></div>'
     +'<nav class="navlist">'
-    +navItem('#',IC.home,'Home',isHome)
-    +navItem('#store',IC.store,'Course store',seg==='store')
+    +navItem('#',IC.home,'My Learning',isHome)
+    +navItem('#library',IC.store,'Course library',seg==='library'||seg==='store')
     +navItem('#review',IC.review,'Review',seg==='review',due>0?due:'')
     +navItem('#saved',IC.saved,'Saved &amp; notes',seg==='saved')
     +navItem('#badges',IC.rewards,'Rewards',seg==='badges')
@@ -1980,77 +1991,115 @@ function renderContinue(){
   return '<div class="continue"><div class="contl"><div class="conttag">Jump back in</div><div class="conttitle">'+R.esc(c.title)+'</div><div class="contsub">'+labelFor(c,r.page)+'</div></div>'
     +'<a class="contbtn" href="#c/'+c.id+'/'+r.page+'">Resume &#8594;</a></div>';
 }
-function renderLibrary(){
-  var a=orderedCourses();var s=libStats();
-  var h=topbar();
-  h+='<div class="wrap dash">';
-  // premium hero: headline + tagline + search + category chips
-  var cats=[];a.forEach(function(c){var k=courseCategory(c);if(cats.indexOf(k)<0)cats.push(k);});
-  h+='<section class="hero2">'
-    +'<h1 class="hero2-h">The cycle of<br><span class="kw">knowledge</span> never ends</h1>'
-    +'<p class="hero2-sub">Premium courses for the endlessly curious. Learn deeply, think clearly, and keep growing — like the Ouroboros, wisdom feeds itself.</p>'
-    +'<div class="searchwrap"><span class="searchico">'+IC.search+'</span><input id="coursesearch" class="searchinp" type="search" placeholder="Search courses, topics, instructors…" autocomplete="off" aria-label="Search courses"></div>';
-  if(cats.length>1){
-    h+='<div class="chips" id="catchips"><button class="chip on" data-cat="__all">All</button>';
-    cats.forEach(function(k){h+='<button class="chip" data-cat="'+R.esc(k)+'">'+R.esc(k)+'</button>';});
-    h+='</div>';
-  } else { h+='<div id="catchips"></div>'; }
-  h+='</section>';
-  // streak + daily goal
+function streakCardHTML(){
   ensureDay();var g=store.gam;var cs=currentStreak();var goal=g.goal||30;var gp=Math.min(100,Math.round((g.todayXP/goal)*100));var met=g.todayXP>=goal;
-  h+='<div class="streakcard">'
+  return '<div class="streakcard">'
     +'<div class="stcell"><span class="flamewrap'+(cs>0?' lit':'')+'">'+FLAME+'</span><div class="stinfo"><b>'+cs+'</b><small>day streak</small></div></div>'
     +'<div class="stcell stgoal"><div class="goalring" style="background:conic-gradient(var(--accent) '+gp+'%, var(--pill) 0)"><span>'+gp+'%</span></div><div class="stinfo"><b>'+g.todayXP+' / '+goal+' XP</b><small>'+(met?'Goal met today &#10003;':'today’s goal')+'</small></div></div>'
     +'<div class="stcell"><div class="stinfo"><b>'+(g.xp||0)+'</b><small>total XP</small></div></div>'
     +'</div>';
-  // review prompt
-  var due=reviewDueCount();
+}
+function studyCardsHTML(){
+  var h='';var g=store.gam;var due=reviewDueCount();
   if(due>0)h+='<a class="reviewcard due" href="#review"><div><div class="rvtag">Spaced repetition</div><div class="rvtitle">'+due+' item'+(due>1?'s':'')+' due for review</div><div class="rvsub">Resurface what you learned so it sticks.</div></div><span class="rvbtn">Review &#8594;</span></a>';
   else if(Object.keys(store.review).length)h+='<a class="reviewcard caught" href="#review"><div><div class="rvtag">Spaced repetition</div><div class="rvtitle">You’re all caught up &#10003;</div><div class="rvsub">New reviews resurface on a spaced schedule.</div></div><span class="rvbtn ghost">View</span></a>';
-  // saved (bookmarks / notes / highlights)
   var sv=savedCount();
   if(sv>0){var nb=(store.bookmarks||[]).length,nn=Object.keys(store.notes||{}).length,nh=Object.keys(store.marks||{}).length;
     var parts2=[];if(nb)parts2.push(nb+' bookmark'+(nb>1?'s':''));if(nn)parts2.push(nn+' note'+(nn>1?'s':''));if(nh)parts2.push(nh+' highlighted lesson'+(nh>1?'s':''));
     h+='<a class="reviewcard saved" href="#saved"><div><div class="rvtag">Your study</div><div class="rvtitle">Saved &amp; bookmarks</div><div class="rvsub">'+parts2.join(' · ')+'</div></div><span class="rvbtn ghost">Open &#8594;</span></a>';
   }
-  // rewards / badges
   if((g.xp||0)>0){var eb=earnedBadges().length;
     h+='<a class="reviewcard rewards" href="#badges"><div><div class="rvtag">Rewards</div><div class="rvtitle"><span class="rwico">&#127915;</span> '+tokensLeft()+' token'+(tokensLeft()===1?'':'s')+' · '+eb+' badge'+(eb===1?'':'s')+'</div><div class="rvsub">Earn tokens every '+TOKEN_EVERY+' XP to spend on quiz power-ups.</div></div><span class="rvbtn ghost">View</span></a>';
   }
-  h+='<div class="statrow">'
+  return h;
+}
+function suggCard(item){
+  if(item.inLib){var c=item.course;var cat=courseCategory(c);var tot=moduleCount(c);
+    return '<a class="libcard sugcard" href="#c/'+c.id+'"><span class="stripe" style="background:'+(c.accent||'#5b8cff')+'"></span><div class="libbody"><span class="cattag">'+R.esc(cat)+'</span><div class="libtitle">'+R.esc(c.title)+'</div><div class="libmeta"><span class="libmods">'+tot+' modules · not started</span></div></div><div class="libactions"><span class="btn">Start &#8594;</span></div></a>';
+  }
+  var s=item.store;return '<a class="libcard sugcard" href="#library/store"><span class="stripe" style="background:'+(s.accent||'#5b8cff')+'"></span><div class="libbody"><span class="cattag">In store</span><div class="libtitle">'+R.esc(s.title)+'</div><div class="libmeta"><span class="libmods">'+R.esc(s.tagline||s.subtitle||'Add to your library')+'</span></div></div><div class="libactions"><span class="btn ghost">Get &#8594;</span></div></a>';
+}
+// ---------- My Learning (home) ----------
+function renderHome(){
+  var s=libStats();var h=topbar();
+  h+='<div class="wrap dash">';
+  var cs=currentStreak();
+  h+='<header class="dashhead"><div class="kicker">'+(cs>0?cs+'-day streak · keep it going':'Welcome back')+'</div><h1>My Learning</h1></header>';
+  h+=streakCardHTML();
+  // jump back in (recent only)
+  var cont=renderContinue();
+  if(cont) h+='<div class="dashsection">'+cont+'</div>';
+  else h+='<div class="dashsection"><a class="continue startcta" href="#library"><div class="contl"><div class="conttag">Get started</div><div class="conttitle">Start your first course</div><div class="contsub">Open the Course Library and pick something to learn.</div></div><span class="contbtn">Browse &#8594;</span></a></div>';
+  // current specialization
+  var t=currentTrack();
+  if(t) h+='<div class="dashsection"><div class="secttitle">Your specialization</div><div class="trackgrid">'+trackCard(t)+'</div></div>';
+  // study prompts (review / saved / rewards)
+  var sc=studyCardsHTML();
+  if(sc) h+='<div class="dashsection">'+sc+'</div>';
+  // stats & goals
+  h+='<div class="dashsection"><div class="secttitle">Your stats</div><div class="statrow">'
     +statTile(s.pct+'%','Overall progress', s.doneMods+' of '+s.totMods+' modules')
     +statTile(s.started+'<span class="statof">/'+s.courses+'</span>','Courses in progress','')
     +statTile(s.doneMods,'Modules completed','')
-    +statTile(s.certs,'Certificates', s.certs===1?'earned':'earned')
-    +'</div>';
-  var cont=renderContinue();
-  if(cont) h+='<div class="dashsection"><div class="secttitle">Recent</div>'+cont+'</div>';
-  h+=tracksSection();
-  h+='<div class="dashsection"><div class="secttitle">Your courses</div><div class="homegrid">';
-  a.forEach(function(c){
-    var p=prog(c.id);var done=completedCount(c);var tot=moduleCount(c);var started=!!p.lastPage||done>0;
-    var built=(window.BUILTIN_COURSES||[]).indexOf(c)>-1;var pct=tot?Math.round(done/tot*100):0;
-    var cat=courseCategory(c);var srch=((c.title||'')+' '+(c.tagline||c.subtitle||'')+' '+cat).toLowerCase();
-    h+='<div class="libcard" data-cid="'+c.id+'" data-cat="'+R.esc(cat)+'" data-search="'+R.esc(srch)+'"><span class="stripe" style="background:'+(c.accent||'#5b8cff')+'"></span>'
-      +'<div class="libbody">'
-      +'<span class="cattag">'+R.esc(cat)+'</span>'
-      +'<a class="libtitle" href="#c/'+c.id+'">'+R.esc(c.title)+'</a>'
-      +'<div class="libbar"><i style="width:'+pct+'%;background:'+(c.accent||'#5b8cff')+'"></i></div>'
-      +'<div class="libmeta">'+ring(done,tot)+'<span class="libmods">'+(started?(p.finalPassed?'<span class="certd">Certified</span>':pct+'% · '+tot+' modules'):tot+' modules · not started')+'</span></div>'
-      +'<details class="cardcollapse"><summary>About this course</summary><div class="cc-body">'+(c.tagline||c.subtitle||'')+'</div></details>'
-      +'</div>'
-      +'<div class="libactions"><a class="btn" href="#c/'+c.id+'">'+(started?'Continue':'Start')+' &#8594;</a>'
-      +'<button class="minibtn" data-export="'+c.id+'">Export</button>'
-      +(built?'':'<button class="minibtn danger" data-remove="'+c.id+'">Remove</button>')
-      +'</div>'
-      +'<span class="draghandle" title="Drag to reorder" aria-label="Drag to reorder">&#8942;&#8942;</span>'
-      +'</div>';
-  });
-  h+='<div class="libempty" id="libempty" style="display:none">No courses match your search. <button class="chip" data-cat="__all">Clear filters</button></div>';
-  h+='<a class="libcard addcard" href="#store"><div class="libbody"><b>&#128722; Course Store</b><small>Browse and download more courses into your library.</small></div></a>';
-  h+='<a class="libcard addcard" href="#new"><div class="libbody"><b>+ Add a course</b><small>Load a course from JSON, or get a template to create your own.</small></div></a>';
-  h+='</div></div></div>';
+    +statTile(s.certs,'Certificates','earned')
+    +'</div></div>';
+  // suggested for you
+  var sug=suggestedCourses();
+  if(sug.length) h+='<div class="dashsection"><div class="secttitle">Suggested for you</div><div class="homegrid">'+sug.map(suggCard).join('')+'</div></div>';
+  h+='</div>';
   app.innerHTML=h;setTop(s.doneMods,s.totMods||1);
+}
+// ---------- Course Library (My courses / Store tabs) ----------
+function renderLibrary(tab){
+  tab=(tab==='store')?'store':'mine';
+  var h=topbar({href:'#',label:'My Learning'});
+  h+='<div class="wrap dash">';
+  h+='<section class="hero2 libhero">'
+    +'<h1 class="hero2-h">The cycle of<br><span class="kw">knowledge</span> never ends</h1>'
+    +'<p class="hero2-sub">Your Course Library — everything you’re learning, plus a store of new courses to add.</p></section>';
+  h+='<div class="libtabs"><a class="libtab'+(tab==='mine'?' on':'')+'" href="#library">My courses</a><a class="libtab'+(tab==='store'?' on':'')+'" href="#library/store">Store</a></div>';
+  if(tab==='mine'){
+    var a=orderedCourses();
+    var cats=[];a.forEach(function(c){var k=courseCategory(c);if(cats.indexOf(k)<0)cats.push(k);});
+    h+='<div class="searchwrap"><span class="searchico">'+IC.search+'</span><input id="coursesearch" class="searchinp" type="search" placeholder="Search your courses…" autocomplete="off" aria-label="Search courses"></div>';
+    if(cats.length>1){h+='<div class="chips" id="catchips"><button class="chip on" data-cat="__all">All</button>';cats.forEach(function(k){h+='<button class="chip" data-cat="'+R.esc(k)+'">'+R.esc(k)+'</button>';});h+='</div>';}else{h+='<div id="catchips"></div>';}
+    h+=tracksSection();
+    h+='<div class="dashsection"><div class="secttitle">Your courses</div><div class="homegrid">';
+    a.forEach(function(c){
+      var p=prog(c.id);var done=completedCount(c);var tot=moduleCount(c);var started=!!p.lastPage||done>0;
+      var built=(window.BUILTIN_COURSES||[]).indexOf(c)>-1;var pct=tot?Math.round(done/tot*100):0;
+      var cat=courseCategory(c);var srch=((c.title||'')+' '+(c.tagline||c.subtitle||'')+' '+cat).toLowerCase();
+      h+='<div class="libcard" data-cid="'+c.id+'" data-cat="'+R.esc(cat)+'" data-search="'+R.esc(srch)+'"><span class="stripe" style="background:'+(c.accent||'#5b8cff')+'"></span>'
+        +'<div class="libbody">'
+        +'<span class="cattag">'+R.esc(cat)+'</span>'
+        +'<a class="libtitle" href="#c/'+c.id+'">'+R.esc(c.title)+'</a>'
+        +'<div class="libbar"><i style="width:'+pct+'%;background:'+(c.accent||'#5b8cff')+'"></i></div>'
+        +'<div class="libmeta">'+ring(done,tot)+'<span class="libmods">'+(started?(p.finalPassed?'<span class="certd">Certified</span>':pct+'% · '+tot+' modules'):tot+' modules · not started')+'</span></div>'
+        +'<details class="cardcollapse"><summary>About this course</summary><div class="cc-body">'+(c.tagline||c.subtitle||'')+'</div></details>'
+        +'</div>'
+        +'<div class="libactions"><a class="btn" href="#c/'+c.id+'">'+(started?'Continue':'Start')+' &#8594;</a>'
+        +'<button class="minibtn" data-export="'+c.id+'">Export</button>'
+        +(built?'':'<button class="minibtn danger" data-remove="'+c.id+'">Remove</button>')
+        +'</div>'
+        +'<span class="draghandle" title="Drag to reorder" aria-label="Drag to reorder">&#8942;&#8942;</span>'
+        +'</div>';
+    });
+    h+='<div class="libempty" id="libempty" style="display:none">No courses match your search. <button class="chip" data-cat="__all">Clear filters</button></div>';
+    h+='<a class="libcard addcard" href="#new"><div class="libbody"><b>+ Add a course</b><small>Load a course from JSON, or get a template to create your own.</small></div></a>';
+    h+='</div></div>';
+    h+='</div>';
+    app.innerHTML=h;setTop(libStats().doneMods,libStats().totMods||1);
+  } else {
+    h+='<p class="sub libstoresub">Courses not yet in your library — add them to start learning.'+(backendEnabled()?'':' Showing the bundled sample catalog.')+'</p>';
+    h+='<div id="storelist"><div class="revempty"><div class="revbig">Loading…</div></div></div>';
+    h+='</div>';
+    app.innerHTML=h;
+    catalogList().then(function(list){
+      var avail=(list||[]).filter(function(c){return !getCourse(c.id);});
+      if((list||[]).length&&!avail.length){var host=document.getElementById('storelist');if(host)host.innerHTML='<div class="revempty"><div class="revbig">You’re all set &#10003;</div><p class="sub">Every available course is already in your library.</p><a class="btn" href="#library">Back to my courses</a></div>';return;}
+      renderStoreList(avail);
+    }).catch(function(){renderStoreList([]);});
+  }
 }
 /* ---------- specialization tracks ---------- */
 function allTracks(){return window.TRACKS||[];}
@@ -2060,23 +2109,39 @@ function trackStats(t){
   ids.forEach(function(id){var c=getCourse(id);if(c&&!isHidden(id)){present++;if(prog(id).finalPassed)done++;}});
   return {total:ids.length,present:present,done:done,pct:ids.length?Math.round(done/ids.length*100):0,complete:present>0&&done===ids.length};
 }
+function trackCard(t){var s=trackStats(t);
+  return '<a class="trackcard" href="#track/'+t.id+'"><span class="tstripe" style="background:'+(t.accent||'#7b61ff')+'"></span>'
+    +'<div class="tkbody"><div class="tktitle">'+R.esc(t.title)+'</div><div class="tksub">'+R.esc(t.tagline||'')+'</div>'
+    +'<div class="tkbar"><i style="width:'+s.pct+'%;background:'+(t.accent||'#7b61ff')+'"></i></div>'
+    +'<div class="tkmeta">'+(s.complete?'<span class="tkdone">Specialization complete &#10003;</span>':s.done+' of '+s.total+' courses'+(s.present<s.total?' · '+(s.total-s.present)+' coming soon':''))+'</div>'
+    +'</div><span class="tkchev">&#8250;</span></a>';
+}
 function tracksSection(){
   var ts=allTracks();if(!ts.length)return '';
   var h='<div class="dashsection"><div class="secttitle">Specializations</div><div class="trackgrid">';
-  ts.forEach(function(t){var s=trackStats(t);
-    h+='<a class="trackcard" href="#track/'+t.id+'"><span class="tstripe" style="background:'+(t.accent||'#7b61ff')+'"></span>'
-      +'<div class="tkbody"><div class="tktitle">'+R.esc(t.title)+'</div><div class="tksub">'+R.esc(t.tagline||'')+'</div>'
-      +'<div class="tkbar"><i style="width:'+s.pct+'%;background:'+(t.accent||'#7b61ff')+'"></i></div>'
-      +'<div class="tkmeta">'+(s.complete?'<span class="tkdone">Specialization complete &#10003;</span>':s.done+' of '+s.total+' courses'+(s.present<s.total?' · '+(s.total-s.present)+' coming soon':''))+'</div>'
-      +'</div><span class="tkchev">&#8250;</span></a>';
-  });
+  ts.forEach(function(t){h+=trackCard(t);});
   return h+'</div></div>';
+}
+// the specialization the learner is currently progressing in (recent course's track, else most-progressed)
+function currentTrack(){
+  var ts=allTracks();if(!ts.length)return null;
+  if(store.recent){var rc=store.recent.courseId;for(var i=0;i<ts.length;i++){if((ts[i].courseIds||[]).indexOf(rc)>-1)return ts[i];}}
+  var best=null,bestScore=-1;
+  ts.forEach(function(t){var sc=0;(t.courseIds||[]).forEach(function(id){var c=getCourse(id);if(c){if(prog(id).finalPassed)sc+=10;else if(prog(id).lastPage||completedCount(c)>0)sc+=3;}});if(sc>bestScore){bestScore=sc;best=t;}});
+  return best||ts[0];
+}
+// up to 2 suggestions: unstarted in-library courses first, then store courses not yet added
+function suggestedCourses(){
+  var out=[];
+  orderedCourses().forEach(function(c){var p=prog(c.id);if(!(p.lastPage||completedCount(c)>0))out.push({course:c,inLib:true});});
+  (window.STORE_CATALOG||[]).forEach(function(c){if(!getCourse(c.id))out.push({store:c,inLib:false});});
+  return out.slice(0,2);
 }
 function prettyCourseId(id){return id.replace(/^film-\d+-/,'').replace(/-/g,' ').replace(/\b\w/g,function(m){return m.toUpperCase();});}
 function renderTrack(id){
   var t=getTrack(id);if(!t){location.hash='';return;}
   var s=trackStats(t);var acc=t.accent||'#7b61ff';
-  var h=topbar({href:'#',label:'Library'});
+  var h=topbar({href:'#',label:'My Learning'});
   h+='<div class="wrap dash"><header class="dashhead"><div class="kicker" style="color:'+acc+'">Specialization</div><h1>'+R.esc(t.title)+'</h1><p class="sub">'+R.esc(t.tagline||'')+'</p></header>';
   h+='<div class="streakcard"><div class="stcell stgoal"><div class="goalring" style="background:conic-gradient('+acc+' '+s.pct+'%, var(--pill) 0)"><span>'+s.pct+'%</span></div><div class="stinfo"><b>'+s.done+' / '+s.total+'</b><small>courses complete</small></div></div></div>';
   if(s.complete){
@@ -2098,7 +2163,7 @@ function renderTrack(id){
 }
 
 function renderCreate(){
-  var h=topbar({href:'#',label:'Library'});
+  var h=topbar({href:'#library',label:'Library'});
   h+='<div class="wrap"><section class="panelcard">'
     +'<h2 class="big">Add / create a course</h2>'
     +'<p class="sub" style="text-align:left">Load a course from JSON below. You can paste JSON, or choose a <b>.json</b> file. Need one built for you? Ask in chat and load the file here.</p>'
@@ -2113,7 +2178,7 @@ function renderCreate(){
 
 function renderCourseHome(c){
   var p=prog(c.id);var tot=moduleCount(c);var done=completedCount(c);var pct=tot?Math.round(done/tot*100):0;
-  var h=topbar({href:'#',label:'Library'});
+  var h=topbar({href:'#library',label:'Library'});
   h+='<div class="wrap">';
   h+='<header class="hero landinghero"><div class="kicker" style="color:'+(c.accent||'#5b8cff')+'">'+R.esc(c.title)+'</div><h1>'+R.esc(c.subtitle||c.title)+'</h1></header>';
   if(c.disclaimer)h+='<div class="callout warn"><span class="lbl">Important</span>'+c.disclaimer+'</div>';
@@ -2552,11 +2617,11 @@ document.addEventListener('pointercancel',endDrag);
 function seg(group,val,label,cur){return '<button class="segbtn'+(cur===val?' on':'')+'" data-set="'+group+'" data-val="'+val+'">'+label+'</button>';}
 function renderSettings(){
   var st=store.settings||{theme:'system',scale:1};
-  var h=topbar({href:'#',label:'Library'});
+  var h=topbar({href:'#',label:'My Learning'});
   h+='<div class="wrap"><header class="dashhead"><div class="kicker">Preferences</div><h1>Settings</h1></header>';
   h+='<div class="setgroup"><div class="setglabel">Account</div><div class="setcard">'
     +'<a class="setrow link" href="#account"><span class="setname">'+(session?R.esc(session.email||'Signed in'):(acctShown()?'Sign in &amp; sync':'Accounts (offline)'))+'</span><span class="setchev">&#8250;</span></a>'
-    +'<a class="setrow link" href="#store"><span class="setname">Course Store</span><span class="setchev">&#8250;</span></a>'
+    +'<a class="setrow link" href="#library"><span class="setname">Course library</span><span class="setchev">&#8250;</span></a>'
     +'</div><p class="setnote">'+(acctShown()?'Sign in to sync your progress and rewards across devices.':'This copy runs offline — progress saves on this device. Connect a backend to enable accounts.')+'</p></div>';
   h+='<div class="setgroup"><div class="setglabel">Appearance</div><div class="setcard">'
     +'<div class="setrow"><span class="setname">Theme</span><div class="segmented">'+seg('theme','system','System',st.theme)+seg('theme','light','Light',st.theme)+seg('theme','dark','Dark',st.theme)+'</div></div>'
@@ -2611,11 +2676,11 @@ function renderSettings(){
 var rev={queue:[],idx:0,correct:0,answered:0};
 function renderReview(){
   ensureDay();var due=reviewDue();
-  var h=topbar({href:'#',label:'Library'});
+  var h=topbar({href:'#',label:'My Learning'});
   h+='<div class="wrap"><header class="dashhead"><div class="kicker">Spaced repetition</div><h1>Review</h1></header>';
   if(!due.length){
     var seeded=Object.keys(store.review).length;
-    h+='<div class="revempty"><div class="revbig">'+(seeded?'You’re all caught up':'Nothing to review yet')+'</div><p class="sub">'+(seeded?'No items are due right now. Questions you’ve answered resurface here on a spaced schedule (1, 2, 4, 7, 15, 30 days) so they stick for the long term. Check back tomorrow.':'Take a module quiz first — the questions you answer will start appearing here on a spaced review schedule.')+'</p><a class="btn" href="#">Back to library</a></div></div>';
+    h+='<div class="revempty"><div class="revbig">'+(seeded?'You’re all caught up':'Nothing to review yet')+'</div><p class="sub">'+(seeded?'No items are due right now. Questions you’ve answered resurface here on a spaced schedule (1, 2, 4, 7, 15, 30 days) so they stick for the long term. Check back tomorrow.':'Take a module quiz first — the questions you answer will start appearing here on a spaced review schedule.')+'</p><a class="btn" href="#">Back to My Learning</a></div></div>';
     app.innerHTML=h;return;
   }
   rev={queue:due.slice(0,20),idx:0,correct:0,answered:0};
@@ -2625,7 +2690,7 @@ function renderReview(){
 function showRevCard(){
   var host=document.getElementById('revhost');if(!host)return;
   if(rev.idx>=rev.queue.length){
-    host.innerHTML='<div class="revempty"><div class="revbig">Review complete</div><p class="sub">'+rev.correct+' / '+rev.answered+' correct. Items you got right move to a longer interval; misses come back sooner.</p><div class="btnrow"><a class="btn" href="#">Back to library</a>'+(reviewDueCount()>0?'<button class="btn ghost" id="revmore">Keep going ('+reviewDueCount()+' due)</button>':'')+'</div></div>';
+    host.innerHTML='<div class="revempty"><div class="revbig">Review complete</div><p class="sub">'+rev.correct+' / '+rev.answered+' correct. Items you got right move to a longer interval; misses come back sooner.</p><div class="btnrow"><a class="btn" href="#">Back to My Learning</a>'+(reviewDueCount()>0?'<button class="btn ghost" id="revmore">Keep going ('+reviewDueCount()+' due)</button>':'')+'</div></div>';
     return;
   }
   var it=rev.queue[rev.idx];var q=it.q;var type=R.qType(q);var body='';
@@ -2678,7 +2743,7 @@ function weakBank(c){return courseQuestionBank(c).filter(function(it){var r=stor
 /* ================= badges page ================= */
 function renderBadges(){
   var earned=earnedBadges();var eset={};earned.forEach(function(b){eset[b.id]=1;});
-  var h=topbar({href:'#',label:'Library'});
+  var h=topbar({href:'#',label:'My Learning'});
   h+='<div class="wrap"><header class="dashhead"><div class="kicker">Achievements</div><h1>Badges &amp; rewards</h1><p class="sub">'+earned.length+' of '+BADGES.length+' badges earned. Keep going to unlock more.</p></header>';
   h+=rewardsCardHTML();
   h+='<div class="badgegrid">';
@@ -2843,7 +2908,7 @@ function acctChipHTML(){
 function updateAcctChip(){var el=document.getElementById('acctchip');if(el)el.outerHTML=acctChipHTML();renderDrawer();}
 function syncLabel(){return syncState==='ok'?'up to date':syncState==='syncing'?'syncing…':syncState==='error'?'error — will retry':'—';}
 function renderAccount(){
-  var h=topbar({href:'#',label:'Library'});
+  var h=topbar({href:'#',label:'My Learning'});
   h+='<div class="wrap"><header class="dashhead"><div class="kicker">Account</div><h1>Sign in &amp; sync</h1></header>';
   if(!acctShown()){
     h+='<div class="revempty"><div class="revbig">Offline mode</div><p class="sub">This copy isn’t connected to an accounts backend, so everything saves on this device only — fully usable, nothing lost. To turn on accounts and cross-device sync, connect a Supabase project (see the setup guide) and sign-in appears here automatically.</p><a class="btn" href="#settings">Back to settings</a></div></div>';
@@ -2899,16 +2964,10 @@ function installCourse(course){
   else{store.imported=(store.imported||[]).filter(function(x){return x.id!==course.id;});store.imported.push(course);}
   save();return true;
 }
-function renderStore(){
-  var h=topbar({href:'#',label:'Library'});
-  h+='<div class="wrap"><header class="dashhead"><div class="kicker">Course Store</div><h1>Browse courses</h1><p class="sub">Download new courses straight into your library.'+(backendEnabled()?'':' Showing the bundled sample catalog.')+'</p></header>';
-  h+='<div id="storelist"><div class="revempty"><div class="revbig">Loading…</div></div></div></div>';
-  app.innerHTML=h;
-  catalogList().then(renderStoreList).catch(function(){renderStoreList([]);});
-}
+function renderStore(){renderLibrary('store');}
 function renderStoreList(list){
   var host=document.getElementById('storelist');if(!host)return;list=list||[];
-  if(!list.length){host.innerHTML='<div class="revempty"><div class="revbig">Nothing here yet</div><p class="sub">'+(backendEnabled()?'Your catalog is empty — publish courses from your Supabase dashboard.':'No sample courses are bundled in this build.')+'</p><a class="btn" href="#">Back to library</a></div>';return;}
+  if(!list.length){host.innerHTML='<div class="revempty"><div class="revbig">Nothing here yet</div><p class="sub">'+(backendEnabled()?'Your catalog is empty — publish courses from your Supabase dashboard.':'No sample courses are bundled in this build.')+'</p><a class="btn" href="#library">Back to my courses</a></div>';return;}
   var h='<div class="storegrid">';
   list.forEach(function(c){var installed=!!getCourse(c.id);var price=c.price||0;
     h+='<div class="storecard"><span class="stripe" style="background:'+(c.accent||'#5b8cff')+'"></span>'
@@ -2924,13 +2983,13 @@ function renderStoreList(list){
 
 function jumpLabel(cid,page){var c=getCourse(cid);if(!c)return page;return R.esc(c.title)+' · '+labelFor(c,page);}
 function renderSaved(){
-  var h=topbar({href:'#',label:'Library'});
+  var h=topbar({href:'#',label:'My Learning'});
   h+='<div class="wrap"><header class="dashhead"><div class="kicker">Your study</div><h1>Saved</h1><p class="sub">Bookmarks, notes, and highlights across every course — all in one place.</p></header>';
   var bms=(store.bookmarks||[]).filter(function(b){return getCourse(b.c)&&!isHidden(b.c);});
   var noteKeys=Object.keys(store.notes||{}).filter(function(k){var cid=k.split('/')[0];return getCourse(cid)&&!isHidden(cid);});
   var markKeys=Object.keys(store.marks||{}).filter(function(k){var cid=k.split('/')[0];return getCourse(cid)&&!isHidden(cid)&&store.marks[k].length;});
   if(!bms.length&&!noteKeys.length&&!markKeys.length){
-    h+='<div class="revempty"><div class="revbig">Nothing saved yet</div><p class="sub">Open any lesson to bookmark it, write a note, or select text to highlight. They’ll collect here.</p><a class="btn" href="#">Back to library</a></div></div>';
+    h+='<div class="revempty"><div class="revbig">Nothing saved yet</div><p class="sub">Open any lesson to bookmark it, write a note, or select text to highlight. They’ll collect here.</p><a class="btn" href="#">Back to My Learning</a></div></div>';
     app.innerHTML=h;return;
   }
   if(bms.length){
@@ -2968,7 +3027,8 @@ function render(){
   if(parts[0]==='saved'){renderSaved();window.scrollTo(0,0);return;}
   if(parts[0]==='badges'){renderBadges();window.scrollTo(0,0);return;}
   if(parts[0]==='account'){renderAccount();window.scrollTo(0,0);return;}
-  if(parts[0]==='store'){renderStore();window.scrollTo(0,0);return;}
+  if(parts[0]==='store'){renderLibrary('store');window.scrollTo(0,0);return;}
+  if(parts[0]==='library'){renderLibrary(parts[1]==='store'?'store':'mine');window.scrollTo(0,0);return;}
   if(parts[0]==='track'){renderTrack(parts[1]);window.scrollTo(0,0);return;}
   if(parts[0]==='c'){var c=getCourse(parts[1]);if(!c||isHidden(parts[1])){location.hash='';return;}
     if(parts[2]==='glossary')renderGlossaryPage(c);
@@ -2979,7 +3039,7 @@ function render(){
     else renderCourseHome(c);}
   else if(parts[0]==='new'){renderCreate();}
   else if(parts[0]==='settings'){renderSettings();}
-  else{renderLibrary();}
+  else{renderHome();}
   var pd=document.getElementById('certdate');if(pd){var d=new Date();var mo=['January','February','March','April','May','June','July','August','September','October','November','December'];pd.textContent=mo[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();}
   window.scrollTo(0,0);
 }
