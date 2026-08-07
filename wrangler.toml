@@ -1,3 +1,10 @@
+# Cloudflare Worker — static site config for Oboros
+#
+# IMPORTANT: "name" must EXACTLY match your existing Worker's name
+# (Cloudflare dashboard -> your Worker -> Settings -> General -> Name).
+# If it doesn't match, wrangler deploys to a DIFFERENT worker and
+# oboros.app will keep serving the old version.
+
 name = "oboros"
 compatibility_date = "2026-08-05"
 
