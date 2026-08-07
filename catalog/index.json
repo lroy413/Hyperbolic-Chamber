@@ -1,0 +1,62 @@
+[
+ {
+  "id": "app-builder",
+  "title": "The Full-Stack Web Engineer",
+  "subtitle": "Build, secure, and ship real web applications from first principles — HTTP, HTML, CSS, JavaScript, the DOM, async, REST, databases, testing, AI, and deployment.",
+  "tagline": "A rigorous, codebase-level path: understand the machinery beneath every layer, then ship a full-stack feature you can defend in a code review.",
+  "accent": "#4f7cff",
+  "price": 0,
+  "author": "Oboros",
+  "category": "Technology",
+  "weeks": 10,
+  "hours": 0
+ },
+ {
+  "id": "audio-1-acoustics",
+  "title": "Acoustics & Audio Signal Fundamentals",
+  "subtitle": "The physics, mathematics and psychoacoustics every audio engineer is assumed to know",
+  "tagline": "Sound is a pressure wave, hearing is a filter bank, and every decision downstream is a number you can compute.",
+  "accent": "#f0883e",
+  "price": 0,
+  "author": "Oboros",
+  "category": "Audio",
+  "weeks": 8,
+  "hours": 80
+ },
+ {
+  "id": "everyday-negotiation",
+  "title": "Everyday Negotiation",
+  "subtitle": "A rigorous, practical course in reaching better agreements without damaging relationships.",
+  "tagline": "From BATNA to the bargaining table: the science and craft of negotiation.",
+  "accent": "#a78bfa",
+  "price": 0,
+  "author": "Oboros",
+  "category": "Business",
+  "weeks": 9,
+  "hours": 0
+ },
+ {
+  "id": "personal-finance",
+  "title": "Personal Finance: A Quantitative Foundation",
+  "subtitle": "Budgeting, the time value of money, debt, taxes, investing, and retirement — with the actual math.",
+  "tagline": "Decisions you can run the numbers on, and habits that compound for life.",
+  "accent": "#31c48d",
+  "price": 0,
+  "author": "Oboros",
+  "category": "Finance",
+  "weeks": 9,
+  "hours": 0
+ },
+ {
+  "id": "stock-charts",
+  "title": "Reading Stock Charts: Technical Analysis & Market Microstructure",
+  "subtitle": "A rigorous, university-level course in price action, indicators with real formulas, microstructure, and the risk math that actually keeps traders solvent.",
+  "tagline": "Candlesticks, structure, RSI/MACD math, bid/ask microstructure, R-multiples, expectancy, and a backtested capstone — taught quantitatively, with a standing reminder that this is education, not financial advice.",
+  "accent": "#31c48d",
+  "price": 0,
+  "author": "Oboros",
+  "category": "Finance",
+  "weeks": 9,
+  "hours": 0
+ }
+]
