@@ -7,7 +7,7 @@
    Catalog: stale-while-revalidate, so a course you've browsed stays reachable.
    Course bodies you actually ADDED are not here — they live in IndexedDB,
    written by the app itself, and are available offline regardless of caches. */
-var VERSION = '7e01f979c6c2';
+var VERSION = 'de03291e0a2c';
 var SHELL = 'oboros-shell-' + VERSION;
 var DATA  = 'oboros-data-v1';
 var SHELL_URLS = ['./', './index.html'];
