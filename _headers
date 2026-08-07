@@ -1,0 +1,23 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+# Always serve the freshest app shell and catalogue index.
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/catalog/index.json
+  Cache-Control: no-cache
+
+# The service worker must never be cached, or a deploy can strand people
+# on the old build forever.
+/sw.js
+  Cache-Control: no-cache
+  Service-Worker-Allowed: /
+
+# Course bodies are versioned by content; cache them hard.
+/catalog/*
+  Cache-Control: public, max-age=86400
