@@ -1322,8 +1322,11 @@ html[data-palette="classic"]{--accent:#5b8cff;--accent2:#31c48d}
 .contbtn,.btn,.rvbtn:not(.ghost){box-shadow:0 1px 2px rgba(0,0,0,.18),0 6px 16px -6px var(--glow)}
 
 /* ===== simulated hero light ===== */
-.hero2{position:relative}
-.hero2::before{content:"";position:absolute;top:-30px;left:50%;width:min(620px,112%);height:300px;transform:translateX(-50%);
+/* The glow used to be 112% of the section, which pushed 6px past the right edge
+   of the page and gave every screen with a hero a horizontal scrollbar. The
+   radial fades to transparent at 72% anyway, so 100% looks identical. */
+.hero2{position:relative;overflow-x:clip}
+.hero2::before{content:"";position:absolute;top:-30px;left:50%;width:min(620px,100%);height:300px;transform:translateX(-50%);
   background:radial-gradient(50% 58% at 50% 40%,var(--glow),transparent 72%);filter:blur(4px);pointer-events:none;z-index:0}
 .hero2>*{position:relative;z-index:1}
 /* elegant top-lit gradient on the display headline */
@@ -1371,6 +1374,84 @@ html[data-palette="classic"]{--accent:#5b8cff;--accent2:#31c48d}
    width where both fit side by side, stack them and let the button span. */
 /* 40px was under the 44px minimum for a primary action people are meant to tap */
 .chbtn{max-width:100%;white-space:normal;min-height:44px;font-size:13.5px}
+
+/* =========================================================================
+   LIBRARY & STORE, ORGANISED BY SPECIALIZATION
+   A flat alphabetical grid answers "what exists". It cannot answer "what does
+   this belong to and what comes before it", which is the question someone
+   browsing a curriculum is actually asking.
+   ========================================================================= */
+.stwrap{margin-top:10px}
+.stbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:4px 0 12px}
+.stcount{font-size:12.5px;font-weight:700;color:var(--muted)}
+.libbar2{justify-content:flex-end;margin:2px 0 10px}
+.grpsw{display:inline-flex;background:var(--pill);border-radius:11px;padding:3px;gap:2px}
+.grpb{appearance:none;border:0;background:transparent;color:var(--muted);font-family:inherit;font-weight:800;
+  font-size:12px;padding:8px 13px;border-radius:9px;cursor:pointer;min-height:44px;white-space:nowrap;transition:.15s}
+.grpb.on{background:var(--panel2);color:var(--ink);box-shadow:var(--edge),0 1px 2px rgba(0,0,0,.2)}
+.grpb:hover{color:var(--ink)}
+
+.grp{margin:0 0 20px}
+.grphead{display:flex;align-items:center;gap:11px;text-decoration:none;color:inherit;
+  padding:11px 12px;border-radius:13px;background:var(--panel);border:1px solid var(--line);
+  margin-bottom:9px;min-height:52px;transition:border-color .15s,background .15s}
+a.grphead:hover{border-color:color-mix(in srgb,var(--ga,var(--accent)) 55%,var(--line));background:var(--panel2)}
+.grphead.plain{background:transparent;border-style:dashed}
+.grpdot{flex:0 0 auto;width:9px;height:9px;border-radius:50%;background:var(--ga,var(--accent))}
+.grptxt{flex:1;min-width:0;display:block}
+.grpname{display:block;font-size:13.5px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;
+  color:var(--ink);line-height:1.3}
+.grpsub{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:2px}
+.grpcount{flex:0 0 auto;font-size:11.5px;font-weight:800;color:var(--muted);
+  background:var(--pill);border-radius:999px;padding:3px 9px;min-width:26px;text-align:center}
+.grphead .grpchev{flex:0 0 auto;color:var(--muted);font-size:19px;line-height:1}
+
+/* a course inside a group: number, title, one action */
+.stlist{display:flex;flex-direction:column;gap:8px}
+/* position:relative is load-bearing — the stretched title overlay below anchors
+   to it. Without it the overlay escapes to the page and swallows every tap. */
+.strow{position:relative;display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);
+  border-radius:13px;padding:11px 13px;min-height:60px;box-shadow:var(--edge)}
+.strow.have{background:transparent;border-style:dashed;box-shadow:none}
+.stn{flex:0 0 auto;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:12.5px;font-weight:800;color:#fff;background:var(--sa,var(--accent))}
+.strow.have .stn{background:var(--pill);color:var(--muted)}
+.stmid{flex:1;min-width:0}
+.sttitle{display:block;font-size:14.5px;font-weight:700;color:var(--ink);text-decoration:none;line-height:1.28}
+a.sttitle:hover{color:var(--accent-t)}
+/* the whole row is the target, not the 19px of text */
+.sttitle.stretch::after{content:'';position:absolute;inset:0;z-index:0}
+.strow .stbtn{position:relative;z-index:1}
+.stsub{font-size:12px;color:var(--muted);font-weight:600;line-height:1.4;margin-top:3px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.stbtn{flex:0 0 auto;appearance:none;border:0;background:var(--accent);color:#fff;font-family:inherit;
+  font-weight:800;font-size:12.5px;padding:11px 14px;border-radius:11px;cursor:pointer;min-height:44px;
+  white-space:nowrap;text-decoration:none;display:flex;align-items:center;
+  box-shadow:0 1px 2px rgba(0,0,0,.18),0 6px 16px -6px var(--glow)}
+.stbtn:hover{filter:brightness(1.08)}
+.stbtn.have{background:transparent;color:var(--accent2-t);box-shadow:none;font-size:12px;padding:11px 4px}
+.stsoon{font-size:12px;color:var(--muted);font-weight:600;padding:9px 13px 2px;line-height:1.5}
+/* the tracks that exist as an outline but have no courses written yet */
+.pllist{display:flex;flex-direction:column;gap:6px}
+.plrow{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;
+  padding:10px 13px;border-radius:11px;border:1px dashed var(--line);min-height:44px;transition:.15s}
+.plrow:hover{border-color:color-mix(in srgb,var(--ga,var(--accent)) 55%,var(--line));background:var(--panel)}
+.plname{flex:1;min-width:0;font-size:13.5px;font-weight:700;color:var(--muted)}
+.plct{flex:0 0 auto;font-size:11.5px;font-weight:700;color:var(--muted)}
+
+/* the compact specialization row used in the library list */
+.tkrow.mini{padding:9px 13px;margin:7px 0;min-height:46px;gap:11px}
+.tkrow.mini .trtitle{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tkrow.mini .trbar{height:3px;margin:6px 0 0}
+.tkrow.mini .trn{flex:0 0 auto;font-size:11.5px;font-weight:800;color:var(--muted);
+  background:var(--pill);border-radius:999px;padding:3px 8px;white-space:nowrap}
+.tkrow.mini .tkchev{padding:0 0 0 2px;font-size:19px}
+
+@media(min-width:820px){
+  .stlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:10px}
+  .grphead{margin-bottom:11px}
+  .trackrows{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0 12px}
+}
 @media(max-width:600px){
   .streakcard.trackhead{flex-direction:column;align-items:stretch;gap:14px}
   .trackhead .stcell{justify-content:flex-start;flex:1 1 auto}
@@ -3524,11 +3605,74 @@ function collSection(id,title,count,body,dflt){
       +'<span class="collchev">&#8250;</span></button>'
     +'<div class="collbody">'+body+'</div></section>';
 }
+/* ---------- organising the library by specialization ----------
+   The store used to be a flat alphabetical list, which answers "what exists"
+   and not "what should I take next, and what does it belong to". Grouping by
+   track answers both, and it makes the sequence visible: seeing "2 · Reading
+   Financial Statements" sitting between courses 1 and 3 is worth more than any
+   amount of description. */
+function trackOfCourse(id){
+  var ts=allTracks();
+  for(var i=0;i<ts.length;i++){
+    var n=(ts[i].courseIds||[]).indexOf(id);
+    if(n>-1)return {track:ts[i],n:n+1};
+  }
+  return null;
+}
+/* Bucket a list of course-ish objects (they only need an .id) into track order.
+   Returns groups in tracks.json order, each with its items sorted by position in
+   the track, plus the ids the track promises that nobody has built yet, plus a
+   final "other" group for anything belonging to no track. */
+function groupByTrack(list,opts){
+  opts=opts||{};
+  var ts=allTracks(),byId={};
+  (list||[]).forEach(function(c){byId[c.id]=c;});
+  var used={},groups=[];
+  ts.forEach(function(t){
+    var items=[],missing=[];
+    (t.courseIds||[]).forEach(function(id,i){
+      if(byId[id]){items.push({c:byId[id],n:i+1});used[id]=1;}
+      else if(!opts.hideMissing)missing.push({id:id,n:i+1});
+    });
+    if(items.length||(missing.length&&opts.keepEmpty))groups.push({track:t,items:items,missing:missing});
+  });
+  var other=(list||[]).filter(function(c){return !used[c.id];})
+    .sort(function(a,b){return (a.title||'').localeCompare(b.title||'');})
+    .map(function(c){return {c:c,n:0};});
+  if(other.length)groups.push({track:null,items:other,missing:[]});
+  return groups;
+}
+function libGroupMode(){
+  var m=store.settings&&store.settings.libGroup;
+  return m==='az'?'az':'track';
+}
+function libGroupToggleHTML(){
+  if(!allTracks().length)return '';
+  var m=libGroupMode();
+  return '<div class="grpsw" role="group" aria-label="How to organise the list">'
+    +'<button class="grpb'+(m==='track'?' on':'')+'" data-libgroup="track">By specialization</button>'
+    +'<button class="grpb'+(m==='az'?' on':'')+'" data-libgroup="az">A&ndash;Z</button></div>';
+}
+/* The header that opens each group. Doubles as a link into the track page, so
+   the grouping is a route into the curriculum rather than just a visual sort. */
+function groupHeadHTML(t,count,extra){
+  if(!t)return '<div class="grphead plain"><span class="grpname">Everything else</span>'
+    +'<span class="grpcount">'+count+'</span></div>';
+  var acc=t.accent||'#7b61ff';var s=trackStats(t);
+  return '<a class="grphead" href="#track/'+t.id+'" style="--ga:'+acc+'">'
+    +'<span class="grpdot"></span>'
+    +'<span class="grptxt"><span class="grpname">'+R.esc(t.title)+'</span>'
+    +'<span class="grpsub">'+(extra||(s.done+' of '+s.total+' complete'))+'</span></span>'
+    +'<span class="grpcount">'+count+'</span><span class="grpchev">&#8250;</span></a>';
+}
+/* One line per specialization. The previous version stacked a title, a progress
+   bar and a meta line, which made six tracks 560px tall — the section read as
+   the main focus of the library even though it collapses. This is 46px. */
 function trackRow(t){var s=trackStats(t);var acc=t.accent||'#7b61ff';
-  return '<a class="trow tkrow" href="#track/'+t.id+'"><span class="trdot" style="background:'+acc+'"></span>'
+  return '<a class="trow tkrow mini" href="#track/'+t.id+'"><span class="trdot" style="background:'+acc+'"></span>'
     +'<div class="trbody"><div class="trtitle">'+R.esc(t.title)+'</div>'
-    +'<div class="trbar"><i style="width:'+s.pct+'%;background:'+acc+'"></i></div>'
-    +'<div class="trmeta">'+(s.complete?'<span class="tkdone">Complete &#10003;</span>':s.done+' of '+s.total+' courses')+'</div></div>'
+    +'<div class="trbar"><i style="width:'+s.pct+'%;background:'+acc+'"></i></div></div>'
+    +'<span class="trn">'+(s.complete?'&#10003;':s.done+'/'+s.total)+'</span>'
     +'<span class="tkchev">&#8250;</span></a>';
 }
 // the drawer + scrim live OUTSIDE #app (on <body>) so the text-size zoom on #app
@@ -3577,6 +3721,11 @@ function filterLib(){
     var okc=cat==='__all'||cd.getAttribute('data-cat')===cat;
     var oks=!q||(cd.getAttribute('data-search')||'').indexOf(q)>-1;
     var vis=okc&&oks;cd.style.display=vis?'':'none';if(vis)shown++;
+  });
+  // a group header with nothing left under it is worse than no header
+  document.querySelectorAll('.libgrp').forEach(function(g){
+    var any=[].slice.call(g.querySelectorAll('.libcard[data-cid]')).some(function(cd){return cd.style.display!=='none';});
+    g.style.display=any?'':'none';
   });
   var empty=document.getElementById('libempty');if(empty)empty.style.display=shown?'none':'block';
 }
@@ -3845,20 +3994,18 @@ function renderLibrary(tab){
     var a=orderedCourses();
     var cats=[];a.forEach(function(c){var k=courseCategory(c);if(cats.indexOf(k)<0)cats.push(k);});
     h+='<div class="searchwrap"><span class="searchico">'+IC.search+'</span><input id="coursesearch" class="searchinp" type="search" placeholder="Search your courses…" autocomplete="off" aria-label="Search courses"></div>';
-    if(cats.length>1){h+='<div class="chips" id="catchips"><button class="chip on" data-cat="__all">All</button>';cats.forEach(function(k){h+='<button class="chip" data-cat="'+R.esc(k)+'">'+R.esc(k)+'</button>';});h+='</div>';}else{h+='<div id="catchips"></div>';}
-    // specializations — collapsed by default, compact rows
-    var ts=allTracks();
-    if(ts.length){
-      var tbody='<div class="trackrows">';ts.forEach(function(t){tbody+=trackRow(t);});tbody+='</div>';
-      h+=collSection('tracks','Specializations',ts.length,tbody,false);
-    }
+    /* Category chips and specialization groups answer the same question, so only
+       one of them is on screen at a time. */
+    var grouped=libGroupMode()==='track'&&allTracks().length&&a.length>1;
+    var showChips=cats.length>1&&!grouped;
+    if(showChips){h+='<div class="chips" id="catchips"><button class="chip on" data-cat="__all">All</button>';cats.forEach(function(k){h+='<button class="chip" data-cat="'+R.esc(k)+'">'+R.esc(k)+'</button>';});h+='</div>';}else{h+='<div id="catchips"></div>';}
+    if(allTracks().length&&a.length>1)h+='<div class="stbar libbar2">'+libGroupToggleHTML()+'</div>';
     // courses — compact cards; details tuck behind a chevron
-    var cbody='<div class="homegrid">';
-    a.forEach(function(c){
+    var cardFor=function(c){
       var p=prog(c.id);var done=completedCount(c);var tot=moduleCount(c);var started=!!p.lastPage||done>0;
       var built=(window.BUILTIN_COURSES||[]).indexOf(c)>-1;var pct=tot?Math.round(done/tot*100):0;
       var cat=courseCategory(c);var srch=((c.title||'')+' '+(c.tagline||c.subtitle||'')+' '+cat).toLowerCase();
-      cbody+='<div class="libcard compact" data-cid="'+c.id+'" data-cat="'+R.esc(cat)+'" data-search="'+R.esc(srch)+'"><span class="stripe" style="background:'+(c.accent||'#5b8cff')+'"></span>'
+      return '<div class="libcard compact" data-cid="'+c.id+'" data-cat="'+R.esc(cat)+'" data-search="'+R.esc(srch)+'"><span class="stripe" style="background:'+(c.accent||'#5b8cff')+'"></span>'
         +'<div class="libbody">'
         +'<div class="lctop"><span class="cattag">'+R.esc(cat)+'</span>'+(p.finalPassed?'<span class="certd">Certified</span>':'')+'</div>'
         +'<a class="libtitle" href="#c/'+c.id+'">'+R.esc(c.title)+'</a>'
@@ -3871,28 +4018,49 @@ function renderLibrary(tab){
         +'</div>'
         +'<span class="draghandle" title="Drag to reorder" aria-label="Drag to reorder">&#8942;&#8942;</span>'
         +'</div>';
-    });
+    };
+    var cbody='';
+    if(grouped){
+      /* Grouped. The learner sees which specialization each course belongs to and
+         where it sits in the sequence, which is the whole point of having tracks. */
+      groupByTrack(a,{hideMissing:true}).forEach(function(g){
+        cbody+='<section class="grp libgrp">'+groupHeadHTML(g.track,g.items.length)
+          +'<div class="homegrid">';
+        g.items.forEach(function(it){cbody+=cardFor(it.c);});
+        cbody+='</div></section>';
+      });
+    } else {
+      cbody+='<div class="homegrid">';
+      a.forEach(function(c){cbody+=cardFor(c);});
+      cbody+='</div>';
+    }
     cbody+='<div class="libempty" id="libempty" style="display:none">No courses match your search. <button class="chip" data-cat="__all">Clear filters</button></div>';
     if(!a.length){
       cbody+='<div class="emptylib"><div class="elico">'+IC.store+'</div><div class="elbig">Your library is empty</div>'
         +'<p class="sub">Every course starts in the Store. Browse the catalogue and add the ones you want — they’ll appear here with your progress.</p>'
         +'<a class="btn" href="#library/store">Browse the Store &#8594;</a></div>';
     }
-    cbody+='<a class="libcard addcard" href="#new"><div class="libbody"><b>+ Add a course</b><small>Load from JSON, or get a template.</small></div></a>';
-    cbody+='</div>';
+    cbody+='<div class="homegrid"><a class="libcard addcard" href="#new"><div class="libbody"><b>+ Add a course</b><small>Load from JSON, or get a template.</small></div></a></div>';
     h+=collSection('mycourses','Your courses',a.length,cbody,true);
+    /* Specializations now sit BELOW what you own. Above it, six rows of things
+       you have not chosen read as the point of the screen. */
+    var ts=allTracks();
+    if(ts.length){
+      var tbody='<div class="trackrows">';ts.forEach(function(t){tbody+=trackRow(t);});
+      tbody+='</div><p class="chfoot">A specialization is an ordered set of courses ending in a program certificate. Browsing one does not commit you to it.</p>';
+      h+=collSection('tracks','Specializations',ts.length,tbody,false);
+    }
     h+='</div>';
     app.innerHTML=h;setTop(libStats().doneMods,libStats().totMods||1);
   } else {
-    h+='<p class="sub libstoresub">Courses not yet in your library — add them to start learning.'+(backendEnabled()?'':' Showing the bundled sample catalog.')+'</p>';
+    h+='<p class="sub libstoresub">Grouped by specialization and numbered in sequence, so you can see where each course sits.'+(backendEnabled()?'':' Showing the bundled sample catalog.')+'</p>';
     h+='<div id="storelist"><div class="revempty"><div class="revbig">Loading…</div></div></div>';
     h+='</div>';
     app.innerHTML=h;
-    catalogList().then(function(list){
-      var avail=(list||[]).filter(function(c){return !getCourse(c.id);});
-      if((list||[]).length&&!avail.length){var host=document.getElementById('storelist');if(host)host.innerHTML='<div class="revempty"><div class="revbig">You’re all set &#10003;</div><p class="sub">Every available course is already in your library.</p><a class="btn" href="#library">Back to my courses</a></div>';return;}
-      renderStoreList(avail);
-    }).catch(function(){renderStoreList([]);});
+    /* The full list is passed, not just what is missing: a sequence with holes in
+       it cannot show you where a course sits. Owned courses stay in place, marked. */
+    catalogList().then(function(list){renderStoreList(list||[]);})
+      .catch(function(){renderStoreList([]);});
   }
 }
 /* ---------- specialization tracks ---------- */
@@ -4620,6 +4788,13 @@ document.addEventListener('click',function(e){
     if(pid){var pt=getTrack(pid);toast(pt?pt.title+' is now your specialization.':'Specialization set.');}
     else toast('Specialization cleared.');
     render();return;}
+  // how the library and store are organised — persisted, applies to both tabs
+  var lg=t.closest&&t.closest('[data-libgroup]');
+  if(lg){
+    var mode=lg.getAttribute('data-libgroup');
+    if(libGroupMode()!==mode){store.settings.libGroup=mode;save();render();}
+    return;
+  }
   // collapsible section toggle
   var stg=t.closest&&t.closest('[data-secttoggle]');
   if(stg){var sid=stg.getAttribute('data-secttoggle');var sec=stg.closest('.coll');var nowOpen=!sec.classList.contains('open');
@@ -5373,20 +5548,75 @@ function installCourse(course){
   save();return true;
 }
 function renderStore(){renderLibrary('store');}
+/* One course in the store, as a row rather than a card. The number is its
+   position in the specialization, which is the piece of information the old
+   flat grid could not express at all. */
+function storeRowHTML(c,n,t){
+  var installed=!!getCourse(c.id)&&!isHidden(c.id);
+  var price=c.price||0;
+  var acc=c.accent||(t&&t.accent)||'#5b8cff';
+  /* A course you own gets a whole-row hit area into its page. One you do not own
+     has no page to go to, so its title is plain text and the button is the only
+     target — which is also why the title is not a link the audit can flag as
+     too small to tap. */
+  return '<div class="strow'+(installed?' have':'')+'" style="--sa:'+acc+'">'
+    +'<span class="stn">'+(n?n:'&bull;')+'</span>'
+    +'<div class="stmid">'
+    +(installed
+      ? '<a class="sttitle stretch" href="#c/'+c.id+'">'+R.esc(c.title)+'</a>'
+      : '<span class="sttitle">'+R.esc(c.title)+'</span>')
+    +'<div class="stsub">'+R.esc(c.tagline||c.subtitle||'')+'</div></div>'
+    +(installed
+      ? '<span class="stbtn have">&#10003; In library</span>'
+      : '<button class="stbtn" data-getcourse="'+R.esc(c.id)+'">'+(price>0?'$'+price:'Get')+'</button>')
+    +'</div>';
+}
 function renderStoreList(list){
   var host=document.getElementById('storelist');if(!host)return;list=list||[];
   if(!list.length){host.innerHTML='<div class="revempty"><div class="revbig">Nothing here yet</div><p class="sub">No courses were found in the catalogue folder'+(backendEnabled()?' or in your backend catalogue':'')+'. Add a course JSON to <code>catalog/</code> and list it in <code>catalog/index.json</code>.</p><a class="btn" href="#library">Back to my courses</a></div>';return;}
-  var h='<div class="storegrid">';
-  list.forEach(function(c){var installed=!!getCourse(c.id);var price=c.price||0;
-    h+='<div class="storecard"><span class="stripe" style="background:'+(c.accent||'#5b8cff')+'"></span>'
-      +'<div class="storebody"><div class="storetitle">'+R.esc(c.title)+'</div>'
-      +'<div class="storetag">'+R.esc(c.tagline||c.subtitle||'')+'</div>'
-      +(c.author?'<div class="storeauth">by '+R.esc(c.author)+'</div>':'')
-      +'<div class="storefoot"><span class="storeprice">'+(price>0?'$'+price:'Free')+'</span>'
-      +(installed?'<span class="storebtn installed">&#10003; In library</span>':'<button class="storebtn" data-getcourse="'+R.esc(c.id)+'">'+(price>0?'Buy':'Download')+'</button>')
-      +'</div></div></div>';
-  });
-  host.innerHTML=h+'</div>';
+  var avail=list.filter(function(c){return !getCourse(c.id)||isHidden(c.id);}).length;
+  var h='';
+  if(libGroupMode()==='az'||!allTracks().length){
+    h+='<div class="stlist">';
+    list.slice().sort(function(a,b){return (a.title||'').localeCompare(b.title||'');})
+      .forEach(function(c){var tc=trackOfCourse(c.id);h+=storeRowHTML(c,tc?tc.n:0,tc&&tc.track);});
+    h+='</div>';
+  } else {
+    /* A specialization with nothing written yet is a promise, not a shelf. Six
+       empty group headers would be most of the screen, so they collapse into one
+       honest line at the bottom instead. */
+    var groups=groupByTrack(list).filter(function(g){return g.items.length;});
+    var planned=allTracks().filter(function(t){
+      return !groups.some(function(g){return g.track&&g.track.id===t.id;});
+    });
+    groups.forEach(function(g){
+      var body='<div class="stlist">';
+      g.items.forEach(function(it){body+=storeRowHTML(it.c,it.n,g.track);});
+      if(g.missing.length){
+        body+='<div class="stsoon">'+g.missing.length+' more course'+(g.missing.length>1?'s':'')+' in this specialization '
+          +(g.missing.length>1?'are':'is')+' still being written.</div>';
+      }
+      body+='</div>';
+      var todo=g.items.filter(function(it){return !getCourse(it.c.id);}).length;
+      var sub=g.track?(todo?todo+' to add':'all added &#10003;'):null;
+      h+='<section class="grp">'+groupHeadHTML(g.track,g.items.length,sub)+body+'</section>';
+    });
+    if(planned.length){
+      var pl='';
+      planned.forEach(function(t){
+        pl+='<a class="plrow" href="#track/'+t.id+'" style="--ga:'+(t.accent||'#7b61ff')+'"><span class="grpdot"></span>'
+          +'<span class="plname">'+R.esc(t.title)+'</span>'
+          +'<span class="plct">'+((t.courseIds||[]).length)+' courses</span></a>';
+      });
+      h+='<section class="grp planned"><div class="grphead plain"><span class="grpname">In development</span>'
+        +'<span class="grpcount">'+planned.length+'</span></div>'
+        +'<div class="pllist">'+pl+'</div>'
+        +'<p class="stsoon">These specializations are planned and their courses are being written. The outline of each is already readable on its page.</p></section>';
+    }
+  }
+  host.innerHTML='<div class="stwrap">'
+    +'<div class="stbar"><span class="stcount">'+avail+' available to add</span>'+libGroupToggleHTML()+'</div>'
+    +h+'</div>';
 }
 
 function jumpLabel(cid,page){var c=getCourse(cid);if(!c)return page;return R.esc(c.title)+' · '+labelFor(c,page);}
