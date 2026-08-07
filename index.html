@@ -45,9 +45,13 @@
   a{color:var(--accent);text-decoration:none}
   section{scroll-margin-top:70px}
   /* top bar */
-  .topbar{position:sticky;top:0;z-index:20;background:rgba(14,16,21,.9);backdrop-filter:blur(10px);
+  /* 0.9 alpha with a 10px blur was not enough: a 30px bold page heading scrolling
+     underneath stayed legible through the bar and read as a rendering fault.
+     iOS Safari also needs the -webkit- prefix or it gets no blur at all. */
+  .topbar{position:sticky;top:0;z-index:20;background:rgba(14,16,21,.985);
+    -webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);
     border-bottom:1px solid var(--line);padding:9px 16px}
-  @media (prefers-color-scheme: light){.topbar{background:rgba(244,246,250,.9)}}
+  @media (prefers-color-scheme: light){.topbar{background:rgba(244,246,250,.985)}}
   .topbar .in{max-width:840px;margin:0 auto;display:flex;align-items:center;gap:12px}
   .brand{font-weight:800;font-size:14px;white-space:nowrap}
   .brand span{color:var(--accent)}
@@ -571,8 +575,8 @@ a.acclesson:hover{background:var(--panel2)}
 html[data-theme="light"]{--bg:#f4f6fa;--panel:#fff;--panel2:#f0f2f8;--panel3:#e8ecf5;--ink:#151a23;--muted:#5a6474;--line:#e1e6ef;--accent:#6d4dff;--accent2:#12b58f;--warn:#b7791f;--bad:#d83a5a;--pill:#eef1f8;--shadow:0 1px 2px rgba(18,26,48,.06),0 14px 30px -14px rgba(18,26,48,.2);--shadow-h:0 3px 8px rgba(18,26,48,.1),0 22px 44px -16px rgba(18,26,48,.28);--edge:inset 0 1px 0 rgba(255,255,255,.9);--sheen:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,0) 46%);--glow:color-mix(in srgb,var(--accent) 20%,transparent);}
 html[data-theme="dark"]{--bg:#0e1015;--panel:#161922;--panel2:#1d212c;--panel3:#232838;--ink:#e9ebf1;--muted:#98a1b2;--line:#2a2f3c;--accent:#7356f0;--accent2:#22d3aa;--warn:#f0b429;--bad:#f2687f;--pill:#212636;--shadow:0 1px 2px rgba(0,0,0,.34),0 12px 28px -12px rgba(0,0,0,.62);--shadow-h:0 2px 6px rgba(0,0,0,.4),0 20px 42px -14px rgba(0,0,0,.7);--edge:inset 0 1px 0 rgba(255,255,255,.06);--sheen:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 42%);--glow:color-mix(in srgb,var(--accent) 26%,transparent);}
 /* top bar background follows the in-app theme toggle, not just the OS setting */
-html[data-theme="light"] .topbar{background:rgba(244,246,250,.9)}
-html[data-theme="dark"] .topbar{background:rgba(14,16,21,.9)}
+html[data-theme="light"] .topbar{background:rgba(244,246,250,.985)}
+html[data-theme="dark"] .topbar{background:rgba(14,16,21,.985)}
 /* ---- slim topbar ---- */
 .topbar{padding:10px 16px}
 .topbar .in{display:flex;align-items:center;gap:12px;max-width:900px}
@@ -590,7 +594,7 @@ html[data-theme="dark"] .topbar{background:rgba(14,16,21,.9)}
 .navbtn[aria-expanded="true"] span:nth-child(2){opacity:0}
 .navbtn[aria-expanded="true"] span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
 /* ---- slide-out drawer ---- */
-.navscrim{position:fixed;inset:0;background:rgba(6,8,12,.5);backdrop-filter:blur(2px);opacity:0;visibility:hidden;transition:.25s;z-index:60}
+.navscrim{position:fixed;inset:0;background:rgba(6,8,12,.5);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);opacity:0;visibility:hidden;transition:.25s;z-index:60}
 .navscrim.open{opacity:1;visibility:visible}
 .navdrawer{position:fixed;top:0;right:0;height:100%;width:290px;max-width:86vw;background:var(--panel);border-left:1px solid var(--line);z-index:61;transform:translateX(105%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-18px 0 50px rgba(0,0,0,.28)}
 .navdrawer.open{transform:translateX(0)}
@@ -1361,6 +1365,20 @@ html[data-palette="classic"]{--accent:#5b8cff;--accent2:#31c48d}
 .chclear{margin-top:16px}
 .trackhead{flex-wrap:wrap}
 .stpick{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+/* "Make this my specialization" is 200px of button. Both cells are flex:1 with a
+   zero basis, so the row never wrapped — it just pushed the button off the right
+   edge of the phone and gave the whole page a horizontal scrollbar. Below the
+   width where both fit side by side, stack them and let the button span. */
+/* 40px was under the 44px minimum for a primary action people are meant to tap */
+.chbtn{max-width:100%;white-space:normal;min-height:44px;font-size:13.5px}
+@media(max-width:600px){
+  .streakcard.trackhead{flex-direction:column;align-items:stretch;gap:14px}
+  .trackhead .stcell{justify-content:flex-start;flex:1 1 auto}
+  .trackhead .stcell.stgoal{flex:1 1 auto}
+  .trackhead .stpick{flex-direction:column;align-items:stretch;gap:8px}
+  .trackhead .stpick .chbtn,.trackhead .stpick .minibtn{width:100%;justify-content:center;text-align:center}
+  .trackhead .stpick .chon{text-align:center;padding:2px 0}
+}
 
 /* ---------- desktop study rail (lesson pages) ---------- */
 .readrail{display:none}
@@ -1563,7 +1581,10 @@ a.brand{display:inline-flex;align-items:center;min-height:44px}
 :root{--tabh:72px}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:55;display:flex;box-sizing:border-box;
   min-height:calc(var(--tabh) + env(safe-area-inset-bottom,0px));
-  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);
+  /* Same lesson as the top bar: 88% is not opaque enough for body text scrolling
+     underneath, and iOS gets no blur at all without the -webkit- prefix. */
+  background:color-mix(in srgb,var(--bg) 98%,transparent);
+  -webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);
   border-top:1px solid var(--line);
   padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))}
 .tab{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
@@ -1591,6 +1612,9 @@ body{padding-bottom:calc(var(--tabh) + 10px + env(safe-area-inset-bottom,0px))} 
 /* ---- top bar as a live dashboard, not a nameplate ---- */
 .topbar.hasstats{padding:8px 14px;position:relative}
 .topbar.hasstats .in{gap:8px}
+/* The first card started at exactly the bar's bottom edge, so its border sat on
+   the rank rail and the two read as one overlapping element. */
+.topbar.hasstats + .wrap{padding-top:14px}
 .tbstats{flex:1;display:flex;align-items:center;gap:6px;min-width:0}
 .tbs{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:11px;
   text-decoration:none;color:var(--ink);min-height:40px;transition:background .14s}
@@ -1603,7 +1627,14 @@ a.tbs:hover{background:var(--panel2)}
 .tbring{width:22px;height:22px;border-radius:50%;flex:0 0 auto;position:relative;display:block}
 .tbring i{position:absolute;inset:4px;border-radius:50%;background:var(--bg);display:block}
 .tbrk{font-size:17px;line-height:1}
-.tbfill{position:absolute;left:0;bottom:-1px;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s}
+/* The rank rail along the bottom edge of the bar. It needs a visible track:
+   a 2px line that simply stops at 89% of the screen reads as a glitch, not as
+   progress. With the unfilled remainder drawn, the same pixel row reads
+   correctly at a glance and needs no label. */
+.topbar.hasstats::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;
+  background:var(--pill);opacity:.7;pointer-events:none}
+.tbfill{position:absolute;left:0;bottom:-1px;height:2px;z-index:1;border-radius:0 2px 2px 0;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s;pointer-events:none}
 @media(max-width:380px){.tbs{padding:7px 6px;gap:4px}.tbs b{font-size:14px}}
 
 /* =========================================================================
