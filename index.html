@@ -660,7 +660,7 @@ body.navopen{overflow:hidden}
 .hero2-h{font-family:var(--serif);font-weight:700;font-size:40px;line-height:1.12;letter-spacing:-.01em;margin:8px auto 12px;max-width:24ch;text-wrap:balance}
 .hero2-h .kw{color:var(--accent)}
 .hero2-sub{color:var(--muted);font-size:15px;line-height:1.55;max-width:44ch;margin:0 auto 20px}
-.searchwrap{position:relative;max-width:520px;margin:0 auto}
+.searchwrap{position:relative;max-width:520px;margin:0 auto 14px}
 .searchico{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);display:flex}
 .searchinp{width:100%;padding:14px 16px 14px 46px;border-radius:14px;border:1px solid var(--hairline);background:var(--panel);color:var(--ink);font-size:15px;font-family:inherit;outline:none;transition:.15s}
 .searchinp::placeholder{color:var(--muted)}
@@ -1206,7 +1206,7 @@ a.trow:hover{border-color:var(--accent)}
 .pcbody{font-size:15px;color:var(--muted)}
 .pcdate{font-size:13px;color:var(--muted);margin-top:10px;font-weight:700}
 /* ---- library tabs + My Learning bits ---- */
-.libtabs{display:flex;gap:6px;background:var(--panel2);border:1px solid var(--hairline);border-radius:14px;padding:5px;margin:6px 0 16px}
+.libtabs{display:flex;gap:6px;background:var(--panel2);border:1px solid var(--hairline);border-radius:14px;padding:5px;margin:14px 0 16px}
 .libtab{flex:1;text-align:center;padding:10px 12px;border-radius:8px;font-weight:800;font-size:15px;color:var(--muted);text-decoration:none;transition:.14s}
 .libtab.on{background:var(--panel);color:var(--ink);box-shadow:var(--edge),var(--shadow)}
 .libtab:not(.on):hover{color:var(--ink)}
@@ -1298,7 +1298,16 @@ a{color:var(--accent-t)}
 .swatch{width:46px;height:46px}
 .swatch span{width:26px;height:26px}
 .minibtn{min-height:44px}
-.cardcollapse summary{min-height:44px;display:flex;align-items:center}
+/* the native disclosure triangle is the last piece of platform furniture in an
+   app that draws everything else itself */
+.cardcollapse summary{min-height:44px;display:flex;align-items:center;gap:8px;list-style:none}
+.cardcollapse summary::-webkit-details-marker{display:none}
+.cardcollapse summary::before{content:"";width:14px;height:14px;flex:0 0 auto;
+  background:currentColor;transition:transform .16s;
+  -webkit-mask:var(--chevmask) center/contain no-repeat;mask:var(--chevmask) center/contain no-repeat}
+.cardcollapse[open] summary::before{transform:rotate(90deg)}
+:root{--chevmask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 5.5 7 6.5-7 6.5'/%3E%3C/svg%3E")}
+@media (prefers-reduced-motion:reduce){.cardcollapse summary::before{transition:none}}
 /* locked modules stay legible while still reading as locked */
 .modcard.locked{opacity:.82}
 /* course-accent text is set inline from course data; nudge it darker on light
@@ -1419,7 +1428,7 @@ html[data-theme="light"] .landinghero .kicker{color:color-mix(in srgb,var(--ca,v
    bottom, so it gets the tools a reference work needs.
    ========================================================================= */
 .glosswrap{padding-bottom:120px}
-.glosstools{position:sticky;top:0;z-index:40;padding:8px 0 10px;margin:0 0 6px;
+.glosstools{position:sticky;top:0;z-index:40;padding:14px 0 10px;margin:0 0 10px;
   background:linear-gradient(180deg,var(--bg) 76%,transparent)}
 .glosstools .searchwrap{margin:0 0 8px}
 /* the A-Z rail: full-height targets, scrolled sideways rather than squeezed
@@ -1598,7 +1607,7 @@ a.rwstat:hover .rwsico{color:var(--accent)}
 .modwhy a{color:var(--accent-t);text-decoration:none}
 .mwdot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
 /* ---- the design hub ---- */
-.dshero{padding:4px 0 14px}
+.dshero{padding:4px 0 0;margin-bottom:16px}
 .dshero h1{font-size:27px;font-weight:800;letter-spacing:-.4px;margin:2px 0 6px}
 .dshero .sub{font-size:14.5px;line-height:1.55;color:var(--muted);margin:0;max-width:56ch}
 .newpath{display:flex;gap:8px;margin:0 0 16px}
@@ -1622,7 +1631,7 @@ a.rwstat:hover .rwsico{color:var(--accent)}
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pcmeta small{display:block;margin-top:3px;font-size:12.5px;font-weight:600;color:var(--muted)}
 /* the lure shown when no path exists yet — one row, not an empty screen */
-.dslure{gap:13px;margin-bottom:12px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 9%,var(--panel)),var(--panel));border:1px solid color-mix(in srgb,var(--accent) 32%,var(--hairline));border-radius:16px;padding:13px 15px;box-shadow:var(--edge),var(--shadow)}
+.dslure{gap:13px;margin:14px 0;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 9%,var(--panel)),var(--panel));border:1px solid color-mix(in srgb,var(--accent) 32%,var(--hairline));border-radius:16px;padding:13px 15px;box-shadow:var(--edge),var(--shadow)}
 .dsico{flex:0 0 auto;width:38px;height:38px;border-radius:12px;background:var(--accent-solid);color:#fff;
   display:flex;align-items:center;justify-content:center;font-size:18px}
 .dstxt2{flex:1;min-width:0}
@@ -1704,7 +1713,9 @@ a.rwstat:hover .rwsico{color:var(--accent)}
    Rewards — the mark is a snake closing a circle, so the page is made of rings.
    ========================================================================= */
 .snkring{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
-.snkring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(0deg)}
+/* > svg, not any svg: a glyph nested inside the ring was being caught by this and
+   absolutely positioned into the corner of a zero-width box. */
+.snkring > svg{position:absolute;inset:0;width:100%;height:100%}
 .snkin{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;line-height:1.05;text-align:center}
 .snkin b{font-size:19px;font-weight:800;color:var(--ink)}
 .snkin small{font-size:9.5px;font-weight:700;color:var(--muted);margin-top:2px}
@@ -1869,6 +1880,58 @@ a.rwstat:hover{border-color:var(--accent)}
 .setnote.warn{color:var(--ink);border-left:3px solid var(--warn);padding-left:11px;margin-top:10px}
 
 
+/* =========================================================================
+   Depth.
+
+   Every icon sat on a flat fill, which reads as a placeholder rather than a
+   made thing. One treatment, applied once: a light source at the top, a hairline
+   of it caught on the upper edge, and a shadow underneath. Nothing is embossed
+   and nothing is glossy — the depth is about a millimetre.
+   ========================================================================= */
+/* only things that already have a fill — a bare glyph given a gradient just looks
+   like a grey box someone forgot to remove */
+.dsico,.bmdisc,.macnum,.trnum,.prnum,.dsnum,.ppbox,.qtxp,.dgcount,.collcount,
+.rkicon,.rkdot,.acli,.bmlock{
+  background-image:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,0) 62%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 1px 2px rgba(0,0,0,.32);
+}
+html[data-theme="light"] .dsico,html[data-theme="light"] .bmdisc,
+html[data-theme="light"] .macnum,html[data-theme="light"] .trnum,
+html[data-theme="light"] .prnum,html[data-theme="light"] .dsnum,
+html[data-theme="light"] .ppbox,html[data-theme="light"] .acli{
+  background-image:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,0) 70%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85), 0 1px 2px rgba(20,26,40,.14);
+}
+/* the accent-filled ones get the light source in their own colour */
+.dsico,.trnum,.macnum.on,.sofbtn,.cgobtn,.sgbtn,.npbtn{
+  background-image:linear-gradient(180deg,rgba(255,255,255,.17),rgba(255,255,255,0) 58%)}
+.dsico{box-shadow:inset 0 1px 0 rgba(255,255,255,.22), 0 2px 6px color-mix(in srgb,var(--accent) 30%,transparent)}
+/* an earned badge is a struck medal, not a coloured square */
+.bmed.got .bmdisc{
+  background-image:
+    radial-gradient(120% 90% at 50% 6%,rgba(255,255,255,.20),rgba(255,255,255,0) 60%),
+    linear-gradient(165deg,color-mix(in srgb,var(--accent) 46%,var(--panel3)),var(--panel3));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),
+             0 0 0 3px color-mix(in srgb,var(--accent) 13%,transparent),
+             0 3px 10px rgba(0,0,0,.34)}
+.bmed.got .bmico{filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}
+/* the quest disc, and any ring that holds a glyph */
+.qtile .snkring::before{
+  background-image:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,0) 64%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
+.qtile.done .snkring::before{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+/* the ring itself catches a little light at its head */
+.snkring:not(.tiny).shut > svg{filter:drop-shadow(0 0 7px color-mix(in srgb,var(--accent) 45%,transparent))}
+/* buttons stop looking like flat rectangles */
+.cgobtn,.sofbtn,.sgbtn,.npbtn,.chbtn,.rbdone{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 2px 8px rgba(0,0,0,.28)}
+.macchev,.prb,.azb,.tvx,.fvx,.pedbtn{box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+@media (prefers-reduced-transparency:reduce){
+  .dsico,.bmdisc,.macnum,.trnum,.prnum,.dsnum,.ppbox{background-image:none;box-shadow:none}
+}
+
+
 /* Oboros wordmark + logo */
 .brand{display:inline-flex;align-items:center;gap:1px;font-weight:800;font-size:20px;letter-spacing:-.3px;color:var(--ink)}
 .brand .brandtext{color:var(--ink)}
@@ -1962,7 +2025,7 @@ html[data-palette="classic"]{--accent:#5b8cff;--accent-solid:#4a71cf;--accent2:#
    browsing a curriculum is actually asking.
    ========================================================================= */
 /* library header — orientation, not brand */
-.libhead{padding:16px 0 2px}
+.libhead{padding:16px 0 2px;margin-bottom:2px}
 .libh1{font-size:26px;font-weight:800;letter-spacing:-.012em;margin:0}
 .libstat{font-size:13px;font-weight:600;color:var(--muted);margin:5px 0 0}
 .libstat b{color:var(--ink);font-weight:800}
@@ -1997,12 +2060,43 @@ a.grphead:hover{transform:translateY(-1px);box-shadow:var(--edge),var(--shadow-h
   background:var(--pill);border-radius:999px;padding:3px 9px;min-width:26px;text-align:center}
 .grphead .grpchev{flex:0 0 auto;color:var(--muted);font-size:20px;line-height:1}
 
-/* a course inside a group: number, title, one action */
+/* A specialization and the courses under it were the same size, the same weight
+   and the same card, so the group read as a flat list of six equal things. The
+   header stays a card; its courses are attached to it, indented, and smaller. */
+.grp{margin-bottom:22px}
+.grp .grphead{margin-bottom:0;border-bottom-left-radius:0;border-bottom-right-radius:0}
+.grp .stlist{position:relative;display:flex;flex-direction:column;gap:0;
+  padding:4px 0 4px 12px;margin-left:20px;
+  border-left:2px solid color-mix(in srgb,var(--line) 80%,transparent)}
 .stlist{display:flex;flex-direction:column;gap:8px}
 /* position:relative is load-bearing — the stretched title overlay below anchors
    to it. Without it the overlay escapes to the page and swallows every tap. */
-.strow{position:relative;display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--hairline);
+.strow{position:relative;display:flex;align-items:center;gap:11px;background:var(--panel);border:1px solid var(--hairline);
   border-radius:14px;padding:11px 13px;min-height:60px;box-shadow:var(--edge)}
+/* inside a group the course is a row, not a card: no border, no fill, less of it */
+.grp .strow,.grp .strow.have{background:transparent;border:0;box-shadow:none;padding:6px 4px 6px 0;
+  min-height:52px;border-radius:0;gap:10px}
+.grp .strow+.strow{border-top:1px solid var(--hairline)}
+.grp .sttitle{font-size:14px;line-height:1.3}
+.grp .stn{width:22px;height:22px;border-radius:7px;font-size:11.5px}
+.grp .stmeta{font-size:11.5px;margin-top:2px}
+/* smaller to look at, but still 44px to hit — it is the only way to add a course */
+.grp .stbtn{font-size:12.5px;padding:0 14px;min-height:44px;border-radius:12px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 1px 3px rgba(0,0,0,.25)}
+.grp .sttitle.stretch{min-height:40px}
+/* the description folds rather than truncating mid-sentence */
+.strow{flex-wrap:wrap}
+.stmore{flex:0 0 auto;position:relative;z-index:1;width:40px;height:40px;border:0;cursor:pointer;
+  background:transparent;color:var(--muted);border-radius:11px;display:flex;
+  align-items:center;justify-content:center;font-family:inherit}
+.stmore:hover{background:var(--panel3);color:var(--ink)}
+.stmore .gi{width:15px;height:15px;transition:transform .16s}
+.strow.showdesc .stmore .gi{transform:rotate(90deg)}
+.strow.showdesc .stmore{background:var(--panel3);color:var(--ink)}
+.stsub{flex-basis:100%;order:9;margin:0 0 6px;font-size:13.5px;line-height:1.55;
+  color:var(--muted);font-weight:600;padding-left:33px}
+.grp .stsub{padding-left:32px}
+@media (prefers-reduced-motion:reduce){.stmore .gi{transition:none}}
 /* owned rows sit back rather than looking like empty slots — dashed reads as
    "add something here", which is the opposite of what it means */
 .strow.have{background:transparent;box-shadow:none;box-shadow:inset 0 0 0 1px var(--hairline)}
@@ -2020,10 +2114,10 @@ a.sttitle:hover{color:var(--accent-t)}
 /* the scale line: what this actually costs you in hours */
 .stmeta{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.01em;margin-top:4px}
 .strow:not(.have) .stmeta{color:color-mix(in srgb,var(--sa,var(--accent)) 62%,var(--ink))}
-/* one line, not two — the second was usually restating the title */
-.stsub{font-size:13px;color:var(--muted);font-weight:600;line-height:1.4;margin-top:3px;
-  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
-.stbtn{flex:0 0 auto;appearance:none;border:0;background:var(--accent-solid);color:#fff;font-family:inherit;
+
+/* the button belongs to its specialization, not to the palette — the store shows
+   several groups at once, so one accent for the whole page would flatten them */
+.stbtn{flex:0 0 auto;appearance:none;border:0;background:var(--sacta,var(--accent-solid));color:#fff;font-family:inherit;
   font-weight:800;font-size:13px;padding:11px 14px;border-radius:14px;cursor:pointer;min-height:44px;
   white-space:nowrap;text-decoration:none;display:flex;align-items:center;
   box-shadow:0 1px 2px rgba(0,0,0,.18),0 6px 16px -6px var(--glow)}
@@ -2138,7 +2232,11 @@ a.sttitle:hover{color:var(--accent-t)}
 .tkrow.mini .tkchev{padding:0 0 0 2px;font-size:20px}
 
 @media(min-width:820px){
-  .stlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:10px}
+  .stlist,.grp .stlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:10px 16px}
+  /* the rail and indent stay: the group still owns its columns */
+  .grp .stlist{padding:6px 0 6px 14px}
+  .grp .strow+.strow{border-top:0}
+  .grp .strow{border-bottom:1px solid var(--hairline)}
   .grphead{margin-bottom:11px}
   .trackrows{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0 12px}
 }
@@ -2265,7 +2363,7 @@ a.brand{display:inline-flex;align-items:center;min-height:44px}
 .mile small{display:block;font-size:11.5px;font-weight:700;color:var(--muted);margin-top:5px;line-height:1.25}
 @media(max-width:420px){.mile small{font-size:11.5px}}
 /* everything else on this page is left-aligned */
-.milecap{font-size:13px;color:var(--muted);font-weight:600;margin:10px 2px 0}
+.milecap{font-size:13px;color:var(--muted);font-weight:600;margin:10px 2px 16px}
 
 /* streak freezes, finally visible */
 .frzline{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;
@@ -4150,6 +4248,7 @@ var G={
   clock:'<circle cx="12" cy="12" r="8.6"/><path d="M12 7.2V12l3.2 2"/>',
   lock:'<rect x="4.6" y="10.4" width="14.8" height="10.2" rx="2.6"/><path d="M8.2 10.4V7.6a3.8 3.8 0 0 1 7.6 0v2.8"/>',
   bubble:'<path d="M20.6 12.6a7.6 7.6 0 0 1-7.6 7.6H8l-4.6 2.2 1-4.5A7.6 7.6 0 0 1 13 5a7.6 7.6 0 0 1 7.6 7.6Z"/>',
+  chev:'<path d="m9 5.5 7 6.5-7 6.5"/>',
   bookmark:'<path d="M6.4 3.4h11.2a1 1 0 0 1 1 1v16.2l-6.6-3.8-6.6 3.8V4.4a1 1 0 0 1 1-1Z"/>',
   expand:'<path d="M14.6 3.4h6v6"/><path d="M9.4 20.6h-6v-6"/><path d="m20.6 3.4-7 7"/><path d="m3.4 20.6 7-7"/>'
 };
@@ -5136,7 +5235,7 @@ function renderHome(){
 function libPathsHTML(){
   var l=paths();
   if(!l.length){
-    return '<a class="row dslure" href="#design"><span class="dsico">✎</span>'
+    return '<a class="row dslure" href="#design"><span class="dsico">'+gi('pencil')+'</span>'
       +'<span class="dstxt2"><b>Design your learning</b>'
       +'<small>String modules from any courses into a path of your own — or take one module on its own</small></span>'
       +'<span class="tkchev">›</span></a>';
@@ -5668,7 +5767,7 @@ function renderModule(c,n){
   h+=collSection('mod-lessons','In this module',lessons+(mod.quiz?1:0),lb,true);
 
   h+=pathPickerHTML(c.id,n);
-  h+='<a class="row ccard" href="#c/'+c.id+'"><div class="num">≡</div><div class="meta"><b>'+R.esc(c.title)+'</b><small>The full course · '+moduleCount(c)+' modules · '+courseHours(c)+' hours</small></div><div class="go">Open →</div></a>';
+  h+='<a class="row ccard" href="#c/'+c.id+'"><div class="num">'+gi('list')+'</div><div class="meta"><b>'+R.esc(c.title)+'</b><small>The full course · '+moduleCount(c)+' modules · '+courseHours(c)+' hours</small></div><div class="go">Open →</div></a>';
   h+='</div>';
   app.innerHTML=h;
 }
@@ -6514,6 +6613,13 @@ document.addEventListener('click',function(e){
     return;
   }
   // collapsible section toggle
+  var sd=t.closest&&t.closest('[data-stdesc]');
+  if(sd){
+    var row=sd.closest('.strow'),pp=row&&row.querySelector('.stsub');
+    if(pp){var open=pp.hidden;pp.hidden=!open;sd.setAttribute('aria-expanded',open?'true':'false');
+      row.classList.toggle('showdesc',open);}
+    return;
+  }
   var az=t.closest&&t.closest('[data-az]');
   if(az){
     var sec=document.getElementById('gl-'+az.getAttribute('data-az').replace('#','hash'));
@@ -7533,17 +7639,24 @@ function storeRowHTML(c,n,t){
   var mods=Array.isArray(src.modules)?src.modules.length:(typeof src.modules==='number'?src.modules:0);
   var hrs=Array.isArray(src.modules)?courseHours(src):(src.hours||0);
   var meta=(mods&&hrs)?hrs+' hours · '+mods+' modules':(mods?mods+' modules':'');
-  return '<div class="strow'+(installed?' have':'')+'" data-cid="'+R.esc(c.id)+'" style="--sa:'+acc+'">'
+  var desc=c.tagline||c.subtitle||'';
+  return '<div class="strow'+(installed?' have':'')+'" data-cid="'+R.esc(c.id)+'" style="--sa:'+acc+';--sacta:'+solidOf(acc)+'">'
     +'<span class="stn">'+(n?n:'&bull;')+'</span>'
     +'<div class="stmid">'
     +(installed
       ? '<a class="sttitle stretch" href="#c/'+c.id+'">'+R.esc(c.title)+'</a>'
       : '<span class="sttitle">'+R.esc(c.title)+'</span>')
     +(meta?'<div class="stmeta">'+meta+'</div>':'')
-    +'<div class="stsub">'+R.esc(c.tagline||c.subtitle||'')+'</div></div>'
+    +'</div>'
     +(installed
       ? '<a class="stbtn go" href="#c/'+c.id+'">Open</a>'
       : '<button class="stbtn" data-getcourse="'+R.esc(c.id)+'">'+(price>0?'$'+price:'Get')+'</button>')
+    /* The description used to be a truncated line with no way to finish reading
+       it. It folds instead, so the row stays short and the sentence stays whole.
+       Not <details>: its two children are not flex items of the row, so an open
+       one cannot span the row and keep its toggle inline. */
+    +(desc?'<button class="stmore" data-stdesc aria-expanded="false" aria-label="About this course">'+gi('chev')+'</button>':'')
+    +(desc?'<p class="stsub" hidden>'+R.esc(desc)+'</p>':'')
     +'</div>';
 }
 function renderStoreList(list){
