@@ -1089,27 +1089,23 @@ function brandHTML(){return '<a class="brand" href="#">'+(window.OB_MARK?'<img c
 /* The persistent chrome should be the dashboard, not a nameplate. On the four tab
    destinations the top bar carries live state — streak, today's XP, rank — instead
    of a logo and a page title nobody needs. Detail pages keep their back link. */
-/* `slim` drops the streak and the goal and keeps only rank.
-
-   Home draws both of those at full size in the bento, so carrying them up here
-   as well meant the same two numbers appeared twice within 400px — which is
-   most of why that screen read as busy. Rank is not repeated anywhere, so it
-   stays. Every other route still gets all three: there the strip is the only
-   place this state is visible. */
-function statStripHTML(slim){
+/* Tried and reverted: a `slim` mode that dropped the streak and the goal on home,
+   on the grounds that the bento draws both at full size 300px below. Two suites
+   assert all three chips are here, and the comment above says the bar carries
+   live state "instead of a logo" — putting the wordmark back in the space was
+   undoing a decision on purpose, which is not what a wordiness pass is for. The
+   chips are 22px of persistent chrome on every tab route; the bento ring is the
+   focal object on one. Those are different jobs at different scales. */
+function statStripHTML(){
   ensureDay();
   var g=store.gam;var cs=currentStreak();var goal=g.goal||DEF_GOAL;
   var gp=Math.min(100,Math.round(((g.todayXP||0)/goal)*100));
   var rp=rankProgress();
-  /* Slim leaves one chip, and one chip floating beside a menu button is not a
-     top bar — it reads as something that failed to load. The mark goes back in
-     the space the two numbers vacated, which is also the only place on this
-     screen the brand appears at all. */
-  return (slim?brandHTML():'')+'<div class="tbstats">'
-    +(slim?'':'<span class="tbs flame'+(cs>0?' lit':'')+'" title="'+cs+'-day streak">'+FLAME+'<b>'+cs+'</b></span>'
+  return '<div class="tbstats">'
+    +'<span class="tbs flame'+(cs>0?' lit':'')+'" title="'+cs+'-day streak">'+FLAME+'<b>'+cs+'</b></span>'
     +'<a class="tbs goal'+(gp>=100?' met':'')+'" href="#badges" title="'+(g.todayXP||0)+' of '+goal+' XP today">'
       +snakeRing(gp,22,gp>=100?'var(--accent2)':'var(--accent)','','tbr')
-      +'<b>'+(g.todayXP||0)+'<small>/'+goal+'</small></b></a>')
+      +'<b>'+(g.todayXP||0)+'<small>/'+goal+'</small></b></a>'
     +'<a class="tbs rank" href="#badges" title="'+R.esc(rp.rank.name)+' — level '+rp.level+'">'
       +'<span class="tbrk">'+gi(rp.rank.icon)+'</span><b>'+rp.level+'</b></a>'
     +'</div>'
@@ -1118,7 +1114,7 @@ function statStripHTML(slim){
 function topbar(back,opts){
   opts=opts||{};
   var stats=!!opts.stats;
-  var left = stats ? statStripHTML(!!opts.slimStats)
+  var left = stats ? statStripHTML()
     : (back ? '<a class="tbback" href="'+back.href+'">&#8592; '+R.esc(back.label)+'</a>' : brandHTML());
   var quick = opts.libBtn
     ? '<a class="iconbtn" href="#library" aria-label="Course library" title="Course library">'+IC.store+'</a>'
@@ -1747,15 +1743,21 @@ function homeBentoHTML(hero){
      sitting unused in the brand folder. */
   var part=wuAnsweredCount(), frz=(store.gam.freezes||0);
   var wcta=wst.done?'Done &#10003;':(part?'Resume &#8594;':'Warm up &#8594;');
+  /* The same sub-label the warm-up tile carried before the merge. Dropping it
+     for a plain "day streak" quietly lost the one number that tells you the
+     warm-up is half finished — which is exactly the state you would come back
+     to finish. Still the warm-up tile: it links to #warmup and keeps the class,
+     so its lit and done states style the way they always have. */
+  var wsub=wst.done?'streak safe today':part?part+' of '+qs.length+' answered':(cs>0?'day streak':'start a streak');
   var inner=gp>=100
     ? '<img class="tdapple" src="'+(window.OB_MARK||'')+'" alt="" aria-hidden="true"><small>done</small>'
     : '<b>'+(g.todayXP||0)+'</b><small>of '+goal+'</small>';
   h+='<div class="brow">';
-  h+='<a class="btile btoday'+(gp>=100?' met':'')+(cs>0?' lit':'')+(wst.done?' warmdone':'')+'" href="#warmup"'
+  h+='<a class="btile btoday warm'+(gp>=100?' met':'')+(cs>0?' lit':'')+(wst.done?' done':'')+'" href="#warmup"'
     +' aria-label="'+(g.todayXP||0)+' of '+goal+' XP today, '+cs+' day streak">'
     +snakeRing(gp,104,gp>=100?'var(--accent2)':'var(--accent)',inner,'bt')
     +'<span class="tdside">'
-      +'<span class="tdstreak">'+FLAME+'<b>'+cs+'</b><small>'+(cs===1?'day streak':cs?'day streak':'start a streak')+'</small>'
+      +'<span class="tdstreak">'+FLAME+'<b>'+cs+'</b><small>'+wsub+'</small>'
       +(frz?'<span class="wcfrz" title="'+frz+' streak freeze'+(frz>1?'s':'')+' banked">'+gi('snow')+frz+'</span>':'')
       +'</span>'
       +'<span class="btgo">'+wcta+'</span>'
@@ -1840,7 +1842,7 @@ function statsStripHTML(){
 }
 function renderHome(){
   navFrom='home';
-  var s=libStats();var h=topbar(null,{stats:true,slimStats:true});
+  var s=libStats();var h=topbar(null,{stats:true});
   h+='<div class="wrap dash homedash">';
   h+='<div class="dashcols"><div class="dashmain">';
   /* One nextUp() for the screen. The bento headlines it and the alert rows below

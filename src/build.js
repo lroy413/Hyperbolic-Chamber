@@ -1330,7 +1330,10 @@ const BENTO_CSS=`
 .tdstreak small{font-size:11.5px;font-weight:600;color:var(--ink2)}
 .btoday.lit .flamegi{color:var(--warn)}
 .btoday.met{border-color:color-mix(in srgb,var(--accent2) 40%,var(--hairline))}
-.btoday.warmdone .btgo{color:var(--accent2)}
+.btoday.done .btgo{color:var(--accent2)}
+/* Three classes so goal-met beats .btile.warm.lit, which is also three and
+   would otherwise paint the border warn-orange on a day you had closed. */
+.btile.btoday.met{border-color:color-mix(in srgb,var(--accent2) 40%,var(--hairline))}
 /* The mark reads as artwork at this size, so it keeps a radius rather than
    floating as a bare cut-out. */
 .tdapple{width:38px;height:38px;display:block;margin:0 auto;border-radius:10px}
@@ -1948,8 +1951,11 @@ a.brand{display:inline-flex;align-items:center;min-height:44px}
   min-height:var(--tabh);
   /* Same lesson as the top bar: 88% is not opaque enough for body text scrolling
      underneath, and iOS gets no blur at all without the -webkit- prefix. A
-     floating bar has content passing under every edge, so it leans opaque. */
-  background:color-mix(in srgb,var(--bg) 97%,transparent);
+     floating bar has content passing under every edge, so it leans opaque.
+     98% is a floor test32 enforces — it exists because body text scrolling under
+     a translucent bar was legible through it. Floating, every edge has content
+     beneath it, so this takes the ceiling rather than the floor. */
+  background:color-mix(in srgb,var(--bg) 99%,transparent);
   -webkit-backdrop-filter:saturate(180%) blur(22px);backdrop-filter:saturate(180%) blur(22px);
   border:1px solid var(--line);
   border-radius:20px;
