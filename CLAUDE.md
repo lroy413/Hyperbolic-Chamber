@@ -31,7 +31,7 @@ src/                      everything a person wrote
   sw.src.js               service worker template; __BUILD__ is stamped by build.js
   make-catalog.js         derives catalog/index.json from the course files
   lint-course.js          validates course JSON (shares rules with renderers.js)
-  make-icons.js           rasterises the PWA icons from the one vector mark
+  make-icons.js           rasterises the PWA icons — `npm run icons`, NOT the build
   data/
     store-courses.json    THE COURSE CONTENT. ~2 MB, six courses. Source of truth.
     courses.json          courses bundled into the library on first run (empty [])
@@ -43,6 +43,7 @@ src/                      everything a person wrote
 
 static/                   copied verbatim into dist/
   _headers                caching + security headers for Cloudflare
+  icons/                  the four PWA icons, committed — see make-icons.js
 
 tests/                    31 suites + 2 audits, ~990 assertions
 scripts/                  run-tests.js, serve.js, copy-static.js
@@ -52,14 +53,14 @@ dist/                     GENERATED. Never committed, never hand-edited.
   index.html              the app
   sw.js                   service worker
   manifest.webmanifest    PWA manifest
-  icons/                  192, 512, maskable 512, apple-touch
+  icons/                  copied from static/icons/, not rasterised at build time
   catalog/                index.json + one file per course
   _headers
 ```
 
 ## How the pieces connect
 
-`src/build.js` is the whole build. It reads every source file, concatenates about twenty CSS blocks in a fixed order into one `<style>`, inlines `renderers.js` and `engine.js` as two `<script>` tags, embeds the catalogue *index* (summaries only, no bodies) as `window.STORE_CATALOG`, writes `dist/index.html`, then writes the service worker stamped with a SHA of that HTML, the manifest, and one JSON file per course into `dist/catalog/`.
+`src/build.js` is the whole build. It reads every source file, concatenates about twenty CSS blocks in a fixed order into one `<style>`, inlines `renderers.js` and `engine.js` as two `<script>` tags, embeds the catalogue *index* (summaries only, no bodies) as `window.STORE_CATALOG`, writes `dist/index.html`, then writes the service worker stamped with a SHA of that HTML, the manifest, and one JSON file per course into `dist/catalog/`. `scripts/copy-static.js` then drops `static/` on top, which is where `_headers` and the four PWA icons come from. **The build launches no browser** — that is the point of keeping the icons committed, and it means a deploy runner needs Node and nothing else.
 
 At runtime the app reads `window.STORE_CATALOG` for the store listing, and fetches `./catalog/<id>.json` only when someone adds that course. So `index.html` stays around 1.3 MB regardless of how many courses exist, and a course you have not added costs nothing.
 
@@ -168,7 +169,8 @@ MOTION, PATHS, RW, TUTOR, DEPTH, SEARCH, READ, CHEER, BENTO, TEXT, BRAND, DESKTO
 
 ```sh
 npm install                 # playwright + wrangler; also: npx playwright install chromium
-npm run build               # writes dist/
+npm run build               # writes dist/ — no browser needed
+npm run icons               # re-rasterise static/icons/ after changing the mark
 npm run serve               # http://localhost:8787 — needed for SW, manifest, install
 npm test                    # all 31 suites, ~990 checks, 15–25 minutes
 npm test 40 42              # just those suites

@@ -1,15 +1,23 @@
-/* Rasterise the app icons from the one vector mark.
+/* Rasterise the app icons from the one vector mark.  npm run icons
 
    A PWA needs real PNG files at fixed sizes, and two different shapes: a plain
    icon that platforms round themselves, and a maskable one that must fill its
    square edge to edge because Android crops it to whatever shape it likes. Both
-   come from logo_vector.svg here rather than being drawn once and forgotten, so
-   the icon can never drift away from the mark in the app. */
+   come from logo_vector.svg rather than being drawn once and forgotten, so the
+   icon can never drift away from the mark in the app.
+
+   This is NOT part of `npm run build`, and the output is committed. Rasterising
+   needs a headless browser, and a deploy that has to download Chromium to redraw
+   four PNGs from a vector that changes approximately never is a slow build and a
+   whole class of CI failure bought for nothing. Run it by hand when the mark
+   changes, and commit what it writes. */
 const fs=require('fs');
 const {chromium}=require('playwright');
 
 const path=require('path');
-const OUT=path.resolve(__dirname,'..','dist','icons');
+/* static/ ships verbatim into dist/, so writing here is what puts the icons at
+   dist/icons/ where the manifest and the service worker expect them. */
+const OUT=path.resolve(__dirname,'..','static','icons');
 const SVG=fs.readFileSync(path.join(__dirname,'brand','logo_vector.svg'),'utf8').trim();
 const CREAM='#f3efe2';
 

@@ -42,16 +42,19 @@ jobs:
 
       - run: npm ci
 
-      # The suites launch Playwright's own Chromium unless CHROMIUM_PATH says
-      # otherwise, so it has to actually be on disk here.
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium
-
+      # Neither of these launches a browser — the PWA icons are committed under
+      # static/icons/ rather than rasterised here — so they run before the
+      # 150 MB Chromium download and a broken build fails in seconds.
       - name: Build
         run: npm run build
 
       - name: Lint courses
         run: npm run lint
+
+      # The suites launch Playwright's own Chromium unless CHROMIUM_PATH says
+      # otherwise, so it has to actually be on disk here.
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
 
       - name: Test
         run: npm test

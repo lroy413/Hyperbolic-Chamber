@@ -4,7 +4,8 @@
   "private": true,
   "description": "Oboros — a self-paced learning app that works offline. One built HTML file, deployed to oboros.app.",
   "scripts": {
-    "build": "node src/build.js && node src/make-icons.js && node scripts/copy-static.js",
+    "build": "node src/build.js && node scripts/copy-static.js",
+    "icons": "node src/make-icons.js",
     "lint": "node src/lint-course.js",
     "test": "node scripts/run-tests.js",
     "audit": "node tests/audit.js && node tests/audit-desktop.js",
