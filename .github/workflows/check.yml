@@ -1,0 +1,63 @@
+# Build, lint, test, audit. This workflow does NOT deploy.
+#
+# Cloudflare Workers Builds owns shipping: it watches the same repo, runs
+# `npm ci && npm run build` and then `npx wrangler deploy` on main. Two systems
+# deploying the same commit would race, so only one of them does.
+#
+# What that costs, stated plainly: Workers Builds runs no tests, so a red run
+# here does not stop a deploy. This is a signal, not a gate. If you want it to
+# be a gate again, make main a protected branch requiring this check to pass —
+# that is the piece that turns the signal back into a blocker.
+
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Read-only: nothing here writes to the repo, and nothing here deploys.
+permissions:
+  contents: read
+
+# Superseding a run is fine now that no deploy hangs off it — cancel the old one
+# rather than spending another 25 minutes of browser time on a stale commit.
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    # A full run is 31 suites and two audits — 15-25 minutes of real browser work.
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # Neither of these launches a browser — the PWA icons are committed under
+      # static/icons/ rather than rasterised here — so they run before the
+      # 150 MB Chromium download and a broken build fails in seconds.
+      - name: Build
+        run: npm run build
+
+      - name: Lint courses
+        run: npm run lint
+
+      # The suites launch Playwright's own Chromium unless CHROMIUM_PATH says
+      # otherwise, so it has to actually be on disk here.
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Test
+        run: npm test
+
+      - name: Audit
+        run: npm run audit

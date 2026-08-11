@@ -20,7 +20,7 @@ package.json              every command you need is a script here
 package-lock.json         pinned devDependencies, so CI installs what you tested
 .gitignore                dist/ and node_modules/
 wrangler.toml             Cloudflare Worker config — [assets] directory = "./dist"
-.github/workflows/        deploy.yml — build → lint → test → audit → deploy
+.github/workflows/        check.yml — build → lint → test → audit. Does NOT deploy.
 
 src/                      everything a person wrote
   build.js                THE BUILD. Assembles dist/ from everything below.
@@ -187,12 +187,16 @@ Set `CHROMIUM_PATH` when you want a specific binary instead. You need it in this
 
 ## How it deploys
 
-Push to `main`. The GitHub Action builds `dist/` from source, runs the linter, the full suite and both audits, and only then runs `wrangler deploy`, which uploads `dist/` to the Cloudflare Worker named in `wrangler.toml`. Nothing generated is committed.
+Push to `main`. **Cloudflare Workers Builds** deploys — it watches this repo directly, runs `npm ci && npm run build`, then `npx wrangler deploy`, which uploads `dist/` to the Worker named in `wrangler.toml`. Nothing generated is committed. Its settings live in the Cloudflare dashboard, not in this repo, which is the one thing about this arrangement worth remembering: the build command is configuration you cannot read here.
+
+The GitHub Action (`check.yml`) runs the same build plus the linter, the full suite and both audits, and **does not deploy**. Only one system ships, because two would race on the same commit.
+
+So the suite is a signal, not a gate: a red check does not stop a deploy, it tells you after the fact. To make it a gate again, protect `main` and require the `check` run to pass — that puts the barrier at the merge instead of at the deploy. Not currently set up.
 
 Two things must be true or the deploy goes somewhere harmless and confusing:
 
 - `name` in `wrangler.toml` must **exactly** match the existing Worker's name in the Cloudflare dashboard. A mismatch creates a second Worker and oboros.app keeps serving the old build.
-- `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` must exist as GitHub repository secrets. The token needs the *Edit Cloudflare Workers* template.
+- Workers Builds needs a build command of `npm ci && npm run build`. Left empty, it deploys with no `dist/` at all and the failure reads as a wrangler problem rather than a missing step.
 
 `sw.js` must sit at the root of what is deployed. A service worker only controls pages at or below its own path, so moving it into a subfolder silently disables offline mode without any error.
 
