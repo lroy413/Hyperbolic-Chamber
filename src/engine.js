@@ -4014,15 +4014,38 @@ function snakeRing(pct,size,acc,inner,cls){
     if(tiny){
       body='<path d="'+_arcD(50,50,r,0,sweep)+'" stroke="'+acc+'" stroke-width="8" fill="none" stroke-linecap="round" style="--len:'+_arcLen(r,0,sweep)+'"/>';
     } else {
-      [[0,0.44,3],[0.44,0.77,5.4],[0.77,1,7.8]].forEach(function(sg){
-        var a0=sweep*sg[0],a1=sweep*sg[1];
-        if(a1-a0<0.5)return;
-        body+='<path d="'+_arcD(50,50,r,a0,a1)+'" stroke="'+acc+'" stroke-width="'+sg[2]+'" fill="none" stroke-linecap="round" style="--len:'+_arcLen(r,a0,a1)+'"/>';
-      });
+      /* The taper used to be three stroked arcs — 3px, 5.4px, 7.8px. At a chip
+         size nobody could see the joins; at 104px they are knuckles, because a
+         round cap of one width butts against a segment 2.4px wider and leaves a
+         step. Blown up to 140px it read as a caterpillar.
+
+         Same idea, more segments: the width still runs tail-to-head, but the
+         change per join is a fraction of a pixel, so the round caps overlap into
+         a continuous body. Segment count follows the rendered size — a 22px chip
+         does not need 20 paths, and the badges screen draws a lot of rings. */
+      var W0=2.4, W1=8.2;
+      var N=Math.max(6,Math.min(26,Math.round(size/4.6)));
+      for(var i=0;i<N;i++){
+        var t0=i/N, t1=(i+1)/N;
+        var a0=sweep*t0, a1=sweep*t1;
+        if(a1-a0<0.05)continue;
+        /* smoothstep, so the tail eases out of nothing rather than starting at a
+           visible width and the neck settles instead of arriving at full size. */
+        var tm=(t0+t1)/2, w=W0+(W1-W0)*(tm*tm*(3-2*tm));
+        /* Segments overlap by a hair. Adjacent arcs that merely touch leave a
+           hairline of background between them once anti-aliasing rounds. */
+        var a1o=Math.min(sweep,a1+0.35);
+        body+='<path d="'+_arcD(50,50,r,a0,a1o)+'" stroke="'+acc+'" stroke-width="'+w.toFixed(2)
+          +'" fill="none" stroke-linecap="round" style="--len:'+_arcLen(r,a0,a1o)+';--i:'+i+'"/>';
+      }
+      /* The head was r=6 against a 7.8 body — half again as wide as the neck, so
+         it read as a ball on a stick. Just proud of the neck now: a head, not a
+         bead. The eye sits inside it and slightly outboard, where an eye goes,
+         instead of floating past the snout at r+2.1. */
       var hp=_pol(50,50,r,sweep);
-      body+='<circle cx="'+hp[0].toFixed(2)+'" cy="'+hp[1].toFixed(2)+'" r="6" fill="'+acc+'"/>';
-      var ep=_pol(50,50,r+2.1,sweep-1.5);
-      body+='<circle cx="'+ep[0].toFixed(2)+'" cy="'+ep[1].toFixed(2)+'" r="1.3" fill="#fff" opacity=".92"/>';
+      body+='<circle cx="'+hp[0].toFixed(2)+'" cy="'+hp[1].toFixed(2)+'" r="'+(W1/2+0.75).toFixed(2)+'" fill="'+acc+'"/>';
+      var ep=_pol(50,50,r+1.35,sweep-1.15);
+      body+='<circle cx="'+ep[0].toFixed(2)+'" cy="'+ep[1].toFixed(2)+'" r="1.15" fill="#fff" opacity=".95"/>';
     }
   }
   return '<span class="snkring'+(pct>=100?' shut':'')+(tiny?' tiny':'')+(cls?' '+cls:'')+'" style="width:'+size+'px;height:'+size+'px">'

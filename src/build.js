@@ -1040,8 +1040,12 @@ const MOTION_CSS=`
 @keyframes snkdraw{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
 /* > svg only: a quest tile puts a glyph inside the ring, and without this the
    icon draws itself on every render too */
+/* --i is the segment's place along the body, so the delay runs tail to head and
+   the ring draws itself the way the animal would move rather than every part of
+   it appearing at once. Small enough to read as one gesture, not a queue. */
 .snkring:not(.tiny) > svg path{stroke-dasharray:var(--len,300);stroke-dashoffset:0;
-  animation:snkdraw .62s cubic-bezier(.22,.75,.3,1) both}
+  animation:snkdraw .5s cubic-bezier(.22,.75,.3,1) both;
+  animation-delay:calc(var(--i,0) * .012s)}
 .snkring:not(.tiny) > svg circle:not(:first-child){animation:snkpop .3s .34s both}
 @keyframes snkpop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
 .snkring > svg circle:not(:first-child){transform-box:fill-box;transform-origin:center}
