@@ -1060,7 +1060,7 @@ const MOTION_CSS=`
 .cgo:active .cgobtn,.sofbtn:active,.npbtn:active,.tvgo:active,.pedbtn:active{transform:scale(.97)}
 .pathcard:active,.libcard:active,.trow:active,.dsmod:active,.qtile:active{transform:scale(.995)}
 /* the reachable copy of the primary action */
-#stickygo{position:fixed;left:0;right:0;bottom:calc(var(--tabh,72px) + env(safe-area-inset-bottom,0px));
+#stickygo{position:fixed;left:0;right:0;bottom:calc(var(--tabh,64px) + var(--tabgap,12px) * 2 + env(safe-area-inset-bottom,0px));
   z-index:70;padding:0 12px 10px;pointer-events:none;
   transform:translateY(130%);transition:transform .24s cubic-bezier(.2,.8,.25,1)}
 #stickygo.on{transform:none}
@@ -1296,6 +1296,56 @@ const BENTO_CSS=`
 .btile.goal .snkring{margin-bottom:4px}
 .btile.goal .snkin b{font-size:15px}
 .btile.goal.met{border-color:color-mix(in srgb,var(--accent2) 40%,var(--hairline))}
+
+/* ---- today: one card, one ring ----
+   .btile lays out as a column and .btgo pushes itself down with margin-top:auto,
+   so the row direction lives here and .btgo moves inside .tdside to keep the
+   column it depends on. */
+.brow:has(.btoday){grid-template-columns:1fr}
+.btoday{flex-direction:row;align-items:center;gap:15px}
+.btoday > .snkring{flex:0 0 auto}
+/* At 104px the unfilled track is a large area of --pill, and on day one — 0 XP,
+   no streak — it is the entire object: the focal point of the screen reads as a
+   smudge. Stronger here only. The small rings elsewhere sit on busier surfaces
+   at sizes where --pill is enough. */
+.btoday .snkring > svg circle:first-child{stroke:var(--line)}
+.btoday .snkin b{font-size:20px}
+.btoday .snkin small{font-size:11.5px;font-weight:600;color:var(--ink2);display:block;margin-top:1px}
+/* Centred beside the ring as one group. .btgo's margin-top:auto would otherwise
+   shove the call to action to the floor of the card, leaving it stranded a long
+   way under the streak it belongs to. */
+.tdside{display:flex;flex-direction:column;align-items:flex-start;gap:4px;flex:1 1 auto;min-width:0;align-self:center}
+.btoday .btgo{margin-top:2px;padding-top:0}
+/* The freeze badge was a corner ornament on the old tile, absolutely placed. In
+   a row it has to sit with the streak it qualifies, not float at the card edge.
+   Two classes deep on purpose: the ".btile .wcfrz" rule pins it, and that rule
+   lives in DESKTOP_CSS, which is concatenated after this block and would
+   otherwise win on source order at equal specificity. The component's rules
+   belong here, so the selector gets more specific rather than the rule moving
+   somewhere it does not belong. (No backticks in these comments — the blocks are
+   template literals and a stray one ends the string.) */
+.btile.btoday .wcfrz{position:static}
+.tdstreak{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.tdstreak .flamegi{width:22px;height:22px;color:var(--muted)}
+.tdstreak small{font-size:11.5px;font-weight:600;color:var(--ink2)}
+.btoday.lit .flamegi{color:var(--warn)}
+.btoday.met{border-color:color-mix(in srgb,var(--accent2) 40%,var(--hairline))}
+.btoday.warmdone .btgo{color:var(--accent2)}
+/* The mark reads as artwork at this size, so it keeps a radius rather than
+   floating as a bare cut-out. */
+.tdapple{width:38px;height:38px;display:block;margin:0 auto;border-radius:10px}
+/* Two moments, both one-shot. Nothing here loops — ambient animation is what
+   makes an interface feel like a toy rather than a tool. */
+@keyframes tdpop{from{transform:scale(.55);opacity:0}to{transform:scale(1);opacity:1}}
+.btoday.met .tdapple{animation:tdpop .34s .28s cubic-bezier(.2,.9,.3,1.25) both}
+/* No card-level glow. Animating box-shadow between --e1 and --e2 puts an
+   interpolated shadow on the card for the length of the tween — a value on
+   neither tier — and test40 samples exactly that and fails, correctly. The ring
+   already carries its own glow through .snkring.shut, so the moment was drawn
+   twice anyway. */
+@media (prefers-reduced-motion:reduce){
+  .btoday.met .tdapple{animation:none}
+}
 @media(min-width:600px){
   .bento{grid-template-columns:1.55fr 1fr;align-items:stretch}
   .bmain{min-height:216px}
@@ -1373,7 +1423,7 @@ const TEXT_CSS=`
 .cardcollapse .cc-body{color:var(--ink2)}
 /* and the things that really are chrome stay dim */
 .collchev,.tkchev,.setchev,.archev,.prchev,.grpchev,.collcount,.grpcount,.dgcount,
-.dsnum,.acli,.trn,.stn,.qtxp,.gmod,.skcap,.viscap{color:var(--muted)}
+.dsnum,.acli,.trn,.stn,.qtxp,.gmod,.viscap{color:var(--muted)}
 `;
 
 const BRAND_CSS=`
@@ -1833,7 +1883,6 @@ a.brand{display:inline-flex;align-items:center;min-height:44px}
 .btile .wcfrz{position:absolute;top:11px;right:11px;font-size:11.5px;padding:3px 8px;
   display:inline-flex;align-items:center;gap:3px}
 .btile .wcfrz .gi{width:13px;height:13px}
-.crsub{color:var(--muted);font-weight:600}
 
 /* =========================================================================
    DAILY WARM-UP — the streak lives on the bento tile now; the old home card
@@ -1888,15 +1937,28 @@ a.brand{display:inline-flex;align-items:center;min-height:44px}
    BOTTOM TAB BAR — every destination one thumb-tap away.
    Replaces navigation that lived behind a hamburger in the far top corner.
    ========================================================================= */
-:root{--tabh:72px}
-.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:55;display:flex;box-sizing:border-box;
-  min-height:calc(var(--tabh) + env(safe-area-inset-bottom,0px));
+/* The bar floats: inset from all three edges, its own rounded shape, content
+   passing beneath it rather than stopping at a full-width wall.
+   --tabgap is the inset, and everything that positions off the bar (the offline
+   notice, toasts, the sticky continue button) has to add it or they sit under
+   the bar instead of above it. */
+:root{--tabh:64px;--tabgap:12px}
+.tabbar{position:fixed;left:var(--tabgap);right:var(--tabgap);z-index:55;display:flex;box-sizing:border-box;
+  bottom:calc(var(--tabgap) + env(safe-area-inset-bottom,0px));
+  min-height:var(--tabh);
   /* Same lesson as the top bar: 88% is not opaque enough for body text scrolling
-     underneath, and iOS gets no blur at all without the -webkit- prefix. */
-  background:color-mix(in srgb,var(--bg) 98%,transparent);
-  -webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);
-  border-top:1px solid var(--line);
-  padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))}
+     underneath, and iOS gets no blur at all without the -webkit- prefix. A
+     floating bar has content passing under every edge, so it leans opaque. */
+  background:color-mix(in srgb,var(--bg) 97%,transparent);
+  -webkit-backdrop-filter:saturate(180%) blur(22px);backdrop-filter:saturate(180%) blur(22px);
+  border:1px solid var(--line);
+  border-radius:20px;
+  box-shadow:var(--e3);
+  padding:5px 5px}
+/* Detached, it needs a lit top edge like every other floating surface here, or
+   it reads as a flat plate rather than something above the page. */
+.tabbar::before{content:"";position:absolute;inset:0;border-radius:20px;pointer-events:none;
+  box-shadow:var(--edge2)}
 .tab{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
   padding:6px 2px;min-height:52px;text-decoration:none;color:var(--muted);border-radius:14px;
   transition:color .14s,background .14s}
@@ -1909,9 +1971,11 @@ a.brand{display:inline-flex;align-items:center;min-height:44px}
 .tbadge{position:absolute;top:-5px;right:-9px;min-width:17px;height:17px;border-radius:999px;
   background:var(--bad);color:#fff;font-size:11.5px;font-weight:700;display:flex;align-items:center;
   justify-content:center;padding:0 4px;border:2px solid var(--bg)}
-body{padding-bottom:calc(var(--tabh) + 10px + env(safe-area-inset-bottom,0px))}   /* clear the tab bar */
-#offbar{bottom:calc(var(--tabh) + env(safe-area-inset-bottom,0px));border-radius:14px;border-bottom:1px solid var(--line)}
-#toast{bottom:calc(var(--tabh) + 16px + env(safe-area-inset-bottom,0px))}
+/* Clears the bar AND its inset — the page scrolls under the bar, so the last row
+   of content has to come to rest above it rather than behind it. */
+body{padding-bottom:calc(var(--tabh) + var(--tabgap) + 12px + env(safe-area-inset-bottom,0px))}
+#offbar{bottom:calc(var(--tabh) + var(--tabgap) * 2 + env(safe-area-inset-bottom,0px));border-radius:14px;border-bottom:1px solid var(--line)}
+#toast{bottom:calc(var(--tabh) + var(--tabgap) * 2 + 6px + env(safe-area-inset-bottom,0px))}
 @media(min-width:1080px){
   .tabbar{display:none}
   body{padding-bottom:0}
@@ -2032,14 +2096,20 @@ a.tbs:active{transform:none}
   white-space:nowrap;padding:12px 4px;margin:-12px 0}
 
 /* streak calendar */
-.skgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+/* Dots, since the numerals went. A row of marks reads as a rhythm — you see a
+   run and a gap without counting — where fourteen two-digit numbers read as a
+   table you have to parse. They stay square-ish with the same radius rather
+   than becoming circles, so they still belong to the same family as the pills
+   and chips around them. */
+.skgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+/* Width, not height. A grid column here is about 46px, so capping the height
+   alone left aspect-ratio nothing to do and the marks came out as wide
+   rectangles. Cap the width and centre them in the column instead. */
 .skday{aspect-ratio:1;border-radius:10px;background:var(--pill);border:1px solid transparent;
-  display:flex;align-items:center;justify-content:center}
-.skday span{font-size:11.5px;font-weight:700;color:var(--muted)}
-.skday.on{background:color-mix(in srgb,var(--accent) 30%,transparent);border-color:color-mix(in srgb,var(--accent) 55%,transparent)}
-.skday.on span{color:var(--accent-t)}
+  width:100%;max-width:34px;margin:0 auto;transition:background .16s ease}
+.skday.on{background:color-mix(in srgb,var(--accent) 34%,transparent);border-color:color-mix(in srgb,var(--accent) 58%,transparent)}
 .skday.now{border-color:var(--ink);border-width:2px}
-.skcap{font-size:11.5px;color:var(--muted);font-weight:700;margin:9px 2px 0;text-align:center}
+.skday.on.now{background:color-mix(in srgb,var(--accent) 52%,transparent)}
 
 /* one-line stat strip instead of four big tiles */
 .statstrip{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--panel);

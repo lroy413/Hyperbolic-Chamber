@@ -154,7 +154,13 @@ const bento=await p.evaluate(()=>{
 ok('there is a main tile',!!bento);
 ok('it is taller than the tiles beside it',bento&&bento.h>bento.tileH*1.4,
   bento&&(bento.h+' vs '+bento.tileH));
-ok('and two smaller ones under it',bento&&bento.tiles===2,bento&&String(bento.tiles));
+/* Was `tiles === 2`. The two tiles under the hero were a goal ring and a streak
+   flame — one subject, today, split across two cards with two numbers, two
+   captions and two calls to action. They are one card now, so the count is one.
+   What this line is actually guarding is that the hero stays dominant and the
+   supporting tiles stay subordinate, which the assertion above measures; a bare
+   count of 2 encoded the old layout rather than the rule. */
+ok('with supporting tiles under it, not competing',bento&&bento.tiles>=1&&bento.tiles<=2,bento&&String(bento.tiles));
 
 /* ---------------- celebration ---------------- */
 console.log('-- the app notices when something happens');

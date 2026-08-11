@@ -1089,16 +1089,27 @@ function brandHTML(){return '<a class="brand" href="#">'+(window.OB_MARK?'<img c
 /* The persistent chrome should be the dashboard, not a nameplate. On the four tab
    destinations the top bar carries live state — streak, today's XP, rank — instead
    of a logo and a page title nobody needs. Detail pages keep their back link. */
-function statStripHTML(){
+/* `slim` drops the streak and the goal and keeps only rank.
+
+   Home draws both of those at full size in the bento, so carrying them up here
+   as well meant the same two numbers appeared twice within 400px — which is
+   most of why that screen read as busy. Rank is not repeated anywhere, so it
+   stays. Every other route still gets all three: there the strip is the only
+   place this state is visible. */
+function statStripHTML(slim){
   ensureDay();
   var g=store.gam;var cs=currentStreak();var goal=g.goal||DEF_GOAL;
   var gp=Math.min(100,Math.round(((g.todayXP||0)/goal)*100));
   var rp=rankProgress();
-  return '<div class="tbstats">'
-    +'<span class="tbs flame'+(cs>0?' lit':'')+'" title="'+cs+'-day streak">'+FLAME+'<b>'+cs+'</b></span>'
+  /* Slim leaves one chip, and one chip floating beside a menu button is not a
+     top bar — it reads as something that failed to load. The mark goes back in
+     the space the two numbers vacated, which is also the only place on this
+     screen the brand appears at all. */
+  return (slim?brandHTML():'')+'<div class="tbstats">'
+    +(slim?'':'<span class="tbs flame'+(cs>0?' lit':'')+'" title="'+cs+'-day streak">'+FLAME+'<b>'+cs+'</b></span>'
     +'<a class="tbs goal'+(gp>=100?' met':'')+'" href="#badges" title="'+(g.todayXP||0)+' of '+goal+' XP today">'
       +snakeRing(gp,22,gp>=100?'var(--accent2)':'var(--accent)','','tbr')
-      +'<b>'+(g.todayXP||0)+'<small>/'+goal+'</small></b></a>'
+      +'<b>'+(g.todayXP||0)+'<small>/'+goal+'</small></b></a>')
     +'<a class="tbs rank" href="#badges" title="'+R.esc(rp.rank.name)+' — level '+rp.level+'">'
       +'<span class="tbrk">'+gi(rp.rank.icon)+'</span><b>'+rp.level+'</b></a>'
     +'</div>'
@@ -1107,7 +1118,7 @@ function statStripHTML(){
 function topbar(back,opts){
   opts=opts||{};
   var stats=!!opts.stats;
-  var left = stats ? statStripHTML()
+  var left = stats ? statStripHTML(!!opts.slimStats)
     : (back ? '<a class="tbback" href="'+back.href+'">&#8592; '+R.esc(back.label)+'</a>' : brandHTML());
   var quick = opts.libBtn
     ? '<a class="iconbtn" href="#library" aria-label="Course library" title="Course library">'+IC.store+'</a>'
@@ -1707,9 +1718,9 @@ function nextUp(){
    came back to do, in its own course's colour, on its own cover art — with the
    two daily habits as smaller tiles beside it.
    ------------------------------------------------------------------ */
-function homeBentoHTML(){
+function homeBentoHTML(hero){
   ensureDay();
-  var n=nextUp();
+  var n=hero||nextUp();
   var acc=n.accent||'#5b8cff';
   var g=store.gam, goal=g.goal||DEF_GOAL;
   var gp=Math.min(100,Math.round(((g.todayXP||0)/goal)*100));
@@ -1724,22 +1735,31 @@ function homeBentoHTML(){
     +'<span class="bmsub">'+R.esc(n.sub)+'</span>'
     +'<span class="bgo">'+R.esc(n.cta)+' &#8594;</span>'
     +'</span></a>';
+  /* One card for today, where there were two.
+
+     A ring for the goal and a flame for the streak sat side by side, each with
+     its own number, its own caption and its own call to action — four text
+     elements for one subject. They are the same subject: today. Merged, the ring
+     gets to be 104px instead of 54px, which is the first size at which the
+     snake's taper and its head actually read as a snake rather than as three
+     pixels of arc. At 100% the loop shuts and the mark takes the centre — the
+     ouroboros closing is this app's own image for a day completed, and it was
+     sitting unused in the brand folder. */
+  var part=wuAnsweredCount(), frz=(store.gam.freezes||0);
+  var wcta=wst.done?'Done &#10003;':(part?'Resume &#8594;':'Warm up &#8594;');
+  var inner=gp>=100
+    ? '<img class="tdapple" src="'+(window.OB_MARK||'')+'" alt="" aria-hidden="true"><small>done</small>'
+    : '<b>'+(g.todayXP||0)+'</b><small>of '+goal+'</small>';
   h+='<div class="brow">';
-  if(qs.length){
-    /* the tile carries what the old home card carried: how far through today's five
-       you are, and how many freezes are banked behind the streak */
-    var part=wuAnsweredCount(), frz=(store.gam.freezes||0);
-    var wsub=wst.done?'streak safe today':part?part+' of '+qs.length+' answered':(cs>0?'day streak':'start a streak');
-    h+='<a class="btile warm'+(wst.done?' done':'')+(cs>0?' lit':'')+'" href="#warmup">'
-      +'<span class="btico">'+FLAME+'</span>'
+  h+='<a class="btile btoday'+(gp>=100?' met':'')+(cs>0?' lit':'')+(wst.done?' warmdone':'')+'" href="#warmup"'
+    +' aria-label="'+(g.todayXP||0)+' of '+goal+' XP today, '+cs+' day streak">'
+    +snakeRing(gp,104,gp>=100?'var(--accent2)':'var(--accent)',inner,'bt')
+    +'<span class="tdside">'
+      +'<span class="tdstreak">'+FLAME+'<b>'+cs+'</b><small>'+(cs===1?'day streak':cs?'day streak':'start a streak')+'</small>'
       +(frz?'<span class="wcfrz" title="'+frz+' streak freeze'+(frz>1?'s':'')+' banked">'+gi('snow')+frz+'</span>':'')
-      +'<b>'+cs+'</b><small>'+wsub+'</small>'
-      +'<span class="btgo">'+(wst.done?'Done &#10003;':(part?'Resume &#8594;':'Warm up &#8594;'))+'</span></a>';
-  }
-  h+='<a class="btile goal'+(gp>=100?' met':'')+'" href="#badges">'
-    +snakeRing(gp,54,gp>=100?'var(--accent2)':'var(--accent)','<b>'+(g.todayXP||0)+'</b>','bt')
-    +'<small>'+(gp>=100?'today is closed':'of '+goal+' XP today')+'</small>'
-    +'<span class="btgo">Rewards &#8594;</span></a>';
+      +'</span>'
+      +'<span class="btgo">'+wcta+'</span>'
+    +'</span></a>';
   h+='</div></section>';
   return h;
 }
@@ -1751,12 +1771,18 @@ function questsHTML(){
   var left=questsRemaining();
   return collSection('quests','Today’s quests',left?left+' left':'all done ✓',questTilesHTML(true),true);
 }
-function dueNowHTML(){
+function dueNowHTML(hero){
   var rows='';
+  var heroHref=(hero&&hero.href)||'';
   var due=reviewDueCount();
-  if(due>0)rows+='<a class="row alertrow rev" href="#review"><span class="arico">'+IC.review+'</span><div class="artxt"><b>'+due+' item'+(due>1?'s':'')+' due for review</b><small>Spaced repetition — resurface what you learned.</small></div><span class="archev">&#8250;</span></a>';
+  /* Skipped when the bento is already leading with it — otherwise the same count
+     appears as the hero and again as a row directly beneath. Home still surfaces
+     the queue in that case; it surfaces it larger. */
+  if(due>0&&heroHref!=='#review')rows+='<a class="row alertrow rev" href="#review"><span class="arico">'+IC.review+'</span><div class="artxt"><b>'+due+' item'+(due>1?'s':'')+' due for review</b><small>Spaced repetition — resurface what you learned.</small></div><span class="archev">&#8250;</span></a>';
   var stale=needsRefresh();
-  if(stale.length)rows+='<a class="row alertrow stale" href="#badges"><span class="arico">'+gi('refresh')+'</span><div class="artxt"><b>'+stale.length+' course'+(stale.length>1?'s':'')+' going stale</b><small>'+R.esc(stale[0].course.title)+(stale.length>1?' and '+(stale.length-1)+' more':'')+' — mastery is slipping.</small></div><span class="archev">&#8250;</span></a>';
+  /* Same rule, but it has to be the SAME course — the hero being some other
+     course you are part-way through says nothing about this one going stale. */
+  if(stale.length&&heroHref!=='#c/'+stale[0].course.id)rows+='<a class="row alertrow stale" href="#badges"><span class="arico">'+gi('refresh')+'</span><div class="artxt"><b>'+stale.length+' course'+(stale.length>1?'s':'')+' going stale</b><small>'+R.esc(stale[0].course.title)+(stale.length>1?' and '+(stale.length-1)+' more':'')+' — mastery is slipping.</small></div><span class="archev">&#8250;</span></a>';
   var sv=savedCount();
   if(sv>0)rows+='<a class="row alertrow saved" href="#saved"><span class="arico">'+IC.saved+'</span><div class="artxt"><b>Saved &amp; notes</b><small>'+sv+' item'+(sv>1?'s':'')+' you kept for later.</small></div><span class="archev">&#8250;</span></a>';
   return rows?'<div class="alerts">'+rows+'</div>':'';
@@ -1769,14 +1795,16 @@ function courseRowsHTML(){
   a.forEach(function(c){
     var p=prog(c.id);var tot=moduleCount(c);var done=completedCount(c);
     var pct=tot?Math.round(done/tot*100):0;var started=!!p.lastPage||done>0;
-    var m=masteryFor(c.id);
     var nm=nextMilestoneLabel(c);
-    var meta=nm.main+(nm.sub?' <span class="crsub">· '+nm.sub+'</span>':'');
+    /* One fact, not three. This line used to read "4 lessons to the Module 3
+       quiz · 2 of 9 modules passed · 22% mastery" — and the bar directly above
+       it was already drawing the second of those. What you want to know is what
+       is next; the ring says how far along you are. */
     body+='<div class="row crow'+(started?' on':'')+'" data-cid="'+c.id+'">'
       +'<span class="crdot" style="background:'+(c.accent||'#5b8cff')+'"></span>'
       +'<div class="crmid"><a class="crtitle" href="#c/'+c.id+'">'+R.esc(c.title)+'</a>'
         +'<div class="crbar"><i style="width:'+pct+'%;background:'+(c.accent||'#5b8cff')+'"></i></div>'
-        +'<div class="crmeta">'+meta+(m&&m.earned>0?' <span class="crmast'+(m.stale?' stale':'')+'">· '+m.pct+'% mastery</span>':'')+'</div></div>'
+        +'<div class="crmeta">'+nm.main+'</div></div>'
       +'<a class="crgo" href="#c/'+c.id+'">'+(p.finalPassed?'Open':started?'Continue':'Start')+' &#8594;</a>'
       +'</div>';
   });
@@ -1788,16 +1816,20 @@ function discoverHTML(){
   var body='<div class="homegrid">'+sug.map(suggCard).join('')+'</div>';
   return collSection('discover','Discover',sug.length,body,false);
 }
+/* Fourteen days as marks, not as a table of numbers.
+
+   This was fourteen date numerals in boxes plus a caption counting them, which
+   is three ways of saying one thing — and the date of a Tuesday nine days ago is
+   not information anyone wants. Lit or unlit is the whole message; the day is
+   still on the title attribute for anyone who hovers, and today keeps its ring.
+   The count went with the numerals: you can see it. */
 function streakGridHTML(n){
   var days=activeDays(n||14);
   var h='<div class="skgrid">';
   days.forEach(function(d){
-    var dom=parseInt(d.day.slice(8),10);
-    h+='<div class="skday'+(d.on?' on':'')+(d.today?' now':'')+'" title="'+d.day+'"><span>'+dom+'</span></div>';
+    h+='<div class="skday'+(d.on?' on':'')+(d.today?' now':'')+'" title="'+d.day+(d.on?' — active':'')+'"></div>';
   });
-  h+='</div>';
-  var count=days.filter(function(d){return d.on;}).length;
-  return h+'<p class="skcap">'+count+' of the last '+days.length+' days active</p>';
+  return h+'</div>';
 }
 function statsStripHTML(){
   var s=libStats();var g=store.gam;
@@ -1808,11 +1840,16 @@ function statsStripHTML(){
 }
 function renderHome(){
   navFrom='home';
-  var s=libStats();var h=topbar(null,{stats:true});
+  var s=libStats();var h=topbar(null,{stats:true,slimStats:true});
   h+='<div class="wrap dash homedash">';
   h+='<div class="dashcols"><div class="dashmain">';
-  h+=homeBentoHTML();
-  h+=dueNowHTML();
+  /* One nextUp() for the screen. The bento headlines it and the alert rows below
+     need to know what it said, or they repeat it — "3 items to review" as the
+     hero and "3 items due for review" as a row 40px under it was the same fact,
+     the same count and the same destination, drawn twice. */
+  var hero=nextUp();
+  h+=homeBentoHTML(hero);
+  h+=dueNowHTML(hero);
   h+=questsHTML();          // the daily hook belongs above the fold, not at the bottom
   h+=courseRowsHTML();
   var t=currentTrack();
