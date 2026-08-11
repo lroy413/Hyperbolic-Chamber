@@ -29,7 +29,7 @@ async function bleed(p,sel){
 }
 
 (async()=>{
-const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
 const TRACKS=['survival','markets','web','film','audio','influence'];
 
 /* ---------------- no horizontal overflow anywhere ---------------- */

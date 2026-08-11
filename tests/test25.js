@@ -34,7 +34,7 @@ window.COURSEAPP_ADAPTER={
 };`;
 
 (async()=>{
-const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
 
 // One context so both "devices" share window.__SRV via a module-level store? They don't —
 // separate pages have separate JS realms. So we shuttle the row between them by hand,

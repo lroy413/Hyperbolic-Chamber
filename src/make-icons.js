@@ -29,7 +29,7 @@ function page(size,maskable){
 
 (async()=>{
   fs.mkdirSync(OUT,{recursive:true});
-  const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+  const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
   const out=[];
   for(const [size,maskable,name] of [
     [192,false,'icon-192.png'],

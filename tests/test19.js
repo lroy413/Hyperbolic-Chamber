@@ -8,7 +8,7 @@ const useCat=async(pg)=>{try{await pg.evaluate(cs=>{window.STORE_CATALOG=cs;},FU
 
 let pass=0,fail=0;function ok(n,c){(c?pass++:fail++);console.log((c?'  PASS ':'  FAIL ')+n);}
 (async()=>{
-const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
 const ctx = await b.newContext({javaScriptEnabled:true,viewport:{width:390,height:844},hasTouch:true,isMobile:true});
   await ctx.addInitScript("window.OBOROS_NO_QUESTS=1;");
 const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(String(e)));p.on('console',m=>{if(m.type()==='error')errs.push(m.text());});

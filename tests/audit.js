@@ -11,7 +11,7 @@ function ratio(a,b){const L1=lum(a),L2=lum(b);return (Math.max(L1,L2)+0.05)/(Mat
 function parseRGB(s){const m=s.match(/rgba?\(([^)]+)\)/);if(!m)return null;const p=m[1].split(',').map(x=>parseFloat(x));return {rgb:[p[0],p[1],p[2]],a:p.length>3?p[3]:1};}
 
 (async()=>{
-const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
 const report={screens:{},issues:[]};
 for(const theme of ['dark','light']){
   const ctx=await b.newContext({javaScriptEnabled:true,viewport:{width:390,height:844},deviceScaleFactor:2,hasTouch:true,isMobile:true});

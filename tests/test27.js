@@ -73,7 +73,7 @@ const boot=async(b,behaviour)=>{
 };
 
 (async()=>{
-const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
 
 // ---------- table missing ----------
 {

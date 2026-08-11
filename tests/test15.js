@@ -21,7 +21,7 @@ const openSect=async(pg,id)=>{
 function ok(n,c){ (c?pass++:fail++); console.log((c?'  PASS ':'  FAIL ')+n); }
 
 (async()=>{
-  const browser=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+  const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
   const ctx = await browser.newContext({javaScriptEnabled:true, acceptDownloads:true});
   await ctx.addInitScript("window.OBOROS_NO_QUESTS=1;");
   const p=await ctx.newPage();

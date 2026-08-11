@@ -11,7 +11,7 @@ let pass=0,fail=0;
 function ok(n,c){ (c?pass++:fail++); console.log((c?'  PASS ':'  FAIL ')+n); }
 
 (async()=>{
-  const browser=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+  const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
   // phone viewport: the drawer is a slide-out sheet behind a hamburger
   const ctx = await browser.newContext({javaScriptEnabled:true,viewport:{width:390,height:844},hasTouch:true,isMobile:true});
   await ctx.addInitScript("window.OBOROS_NO_QUESTS=1;");

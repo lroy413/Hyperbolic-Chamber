@@ -59,8 +59,15 @@ function idbTx(mode,fn){
 function idbAllCourses(){return idbTx('readonly',function(os){return os.getAll?os.getAll():null;}).then(function(r){return Array.isArray(r)?r:[];});}
 function persistCourses(){
   if(!_useIdb)return Promise.resolve(false);
-  var list=(store.imported||[]).filter(function(c){return c&&c.id&&c.modules;});
-  var keep={};list.forEach(function(c){keep[c.id]=1;});
+  /* Two different questions, and answering both with one list loses courses.
+     What to WRITE is bodies only — a summary put over a body is how a course ends
+     up looking installed with nothing to read. What to KEEP is everything in the
+     library, body in hand or not: `boot()` caps first paint at 900 ms and calls
+     migrateLibrary() at the deadline, so a save can land while `imported` is still
+     the unhydrated summaries localStorage held. Deriving `keep` from the bodies
+     would read that moment as "the learner removed five courses". */
+  var list=(store.imported||[]).filter(function(c){return c&&c.id&&Array.isArray(c.modules)&&c.modules.length;});
+  var keep={};(store.imported||[]).forEach(function(c){if(c&&c.id)keep[c.id]=1;});
   return idbTx('readwrite',function(os){
     var all=os.getAllKeys?os.getAllKeys():null;
     if(all)all.onsuccess=function(){(all.result||[]).forEach(function(k){if(!keep[k])os.delete(k);});};
@@ -71,11 +78,16 @@ function courseSig(){return (store.imported||[]).map(function(c){return c&&c.id;
 /* Pull bodies out of IndexedDB and reattach them to the summaries localStorage kept.
    Also migrates anyone whose bodies are still sitting in localStorage from before. */
 function hydrateCourses(){
-  var legacy=(store.imported||[]).some(function(c){return c&&c.modules;});
+  /* "Legacy" means a whole body still sitting in localStorage. The summaries we
+     write there carry a module count, which is not that. */
+  var legacy=(store.imported||[]).some(function(c){return c&&Array.isArray(c.modules)&&c.modules.length;});
   return idbOpen().then(function(db){
     if(!db){_courseSig=courseSig();return false;}
     return idbAllCourses().then(function(rows){
-      var byId={};rows.forEach(function(c){if(c&&c.id)byId[c.id]=c;});
+      /* Only rows that are actually bodies count. A build that predates the
+         `Array.isArray` guards below wrote summaries in here, and taking one back
+         out would re-create the empty course it came from instead of healing it. */
+      var byId={};rows.forEach(function(c){if(c&&c.id&&Array.isArray(c.modules)&&c.modules.length)byId[c.id]=c;});
       var out=[];
       (store.imported||[]).forEach(function(c){
         if(!c||!c.id)return;
@@ -774,7 +786,7 @@ function restoreSyncedCourses(ids){
     return Promise.resolve().then(function(){return catalogGet(id);}).catch(function(){return null;});
   })).then(function(list){
     var added=0;
-    list.forEach(function(c){if(c&&c.id&&c.modules&&!have[c.id]){store.imported.push(c);have[c.id]=1;added++;}});
+    list.forEach(function(c){if(c&&c.id&&Array.isArray(c.modules)&&c.modules.length&&!have[c.id]){store.imported.push(c);have[c.id]=1;added++;}});
     if(added)save();
     return added>0;
   });
@@ -4586,7 +4598,14 @@ function render(){
 /* Courses now start in the store and are added to the library deliberately.
    Anyone who already has progress in a course keeps it: we re-install it on first run. */
 function migrateLibrary(){
-  var cat=(window.STORE_CATALOG||[]).filter(function(c){return c&&c.modules;});
+  /* Only a real body can be restored from here. `c.modules` was a safe test for
+     that until catalogue summaries started carrying a module *count* — at which
+     point `9` was truthy, every progressed course was "restored" as a bodyless
+     summary, and `have[id]` below then suppressed the async re-fetch that would
+     have healed it. The learner got a course page with a title and no lessons,
+     permanently. STORE_CATALOG is summaries only, so this filter is empty today
+     and the fetch below does the work. */
+  var cat=(window.STORE_CATALOG||[]).filter(function(c){return c&&Array.isArray(c.modules)&&c.modules.length;});
   var have={};(store.imported||[]).forEach(function(c){have[c.id]=1;});
   var added=0;
   Object.keys(store.progress||{}).forEach(function(id){
@@ -4608,7 +4627,9 @@ function migrateLibrary(){
     if(!active)return;
     have[id]=1;
     catalogGet(id).then(function(full){
-      if(full&&full.modules&&!getCourse(id)){store.imported.push(full);save();softRender();}
+      /* catalogGet falls back to the inline summary when there is no catalogue to
+         fetch from, so this has to check for a body rather than for the field. */
+      if(full&&Array.isArray(full.modules)&&full.modules.length&&!getCourse(id)){store.imported.push(full);save();softRender();}
     }).catch(function(){});
   });
 }

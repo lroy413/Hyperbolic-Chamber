@@ -8,7 +8,7 @@ process.chdir(require('path').resolve(__dirname,'..','dist'));
 const {chromium}=require('playwright');
 const path=require('path'),fs=require('fs');
 const URL='file://'+path.resolve('index.html');
-const R=require('./renderers.js');
+const R=require('../src/renderers.js');
 
 let pass=0,fail=0;
 function ok(n,c){(c?pass++:fail++);console.log((c?'  PASS ':'  FAIL ')+n);}
@@ -106,7 +106,7 @@ console.log('-- the real catalogue is publishable');
 
 console.log('-- the import screen surfaces it');
 (async()=>{
-  const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+  const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
   const ctx = await b.newContext({javaScriptEnabled:true,viewport:{width:1280,height:900}});
   await ctx.addInitScript("window.OBOROS_NO_QUESTS=1;");
   const p=await ctx.newPage();

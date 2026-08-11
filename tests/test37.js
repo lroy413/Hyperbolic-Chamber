@@ -28,7 +28,7 @@ const EMOJI=/[\u{1F000}-\u{1FAFF}\u{2190}-\u{21FF}]?[\u{1F300}-\u{1FAFF}\u{1F900
 const ALLOWED=/^[←-⇿✓✔✗✘✕✖×›‹▾▴▼▲•…‘’“”–—·\s]*$/;
 
 (async()=>{
-const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
 const ctx=await b.newContext({viewport:{width:393,height:852},hasTouch:true});
 await ctx.addInitScript('window.OBOROS_NO_QUESTS=1;window.OBOROS_TEST=1;');
 const p=await ctx.newPage();

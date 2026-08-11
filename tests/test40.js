@@ -35,7 +35,7 @@ const RADII=[10,14,20];            /* plus pills, which are anything ≥ 40 */
 const SHEEN=['0.06','0.09','0.18'];/* the three lit top edges, dark theme */
 
 (async()=>{
-const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
 const ctx=await b.newContext({viewport:{width:393,height:852},hasTouch:true});
 await ctx.addInitScript('window.OBOROS_NO_QUESTS=1;window.OBOROS_TEST=1;');
 const p=await ctx.newPage();

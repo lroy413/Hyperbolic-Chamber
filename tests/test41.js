@@ -39,7 +39,7 @@ const server=http.createServer(function(req,res){
 (async()=>{
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
 const PORT=server.address().port, BASE='http://127.0.0.1:'+PORT+'/';
-const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
 const ctx=await b.newContext({viewport:{width:393,height:852},hasTouch:true});
 await ctx.addInitScript('window.OBOROS_NO_QUESTS=1;window.OBOROS_TEST=1;');
 const p=await ctx.newPage();

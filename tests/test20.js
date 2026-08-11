@@ -17,7 +17,7 @@ const openSect=async(pg,id)=>{
   }
 };
 (async()=>{
-const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
 const p=await (await b.newContext({javaScriptEnabled:true,viewport:{width:390,height:900}})).newPage();
 const errs=[];p.on('pageerror',e=>errs.push(String(e)));p.on('console',m=>{if(m.type()==='error')errs.push(m.text());});
 await p.goto(URL,{waitUntil:'load'});await useCat(p);

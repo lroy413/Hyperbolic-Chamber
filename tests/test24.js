@@ -31,7 +31,7 @@ async function seed(p,state){
 }
 
 (async()=>{
-const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
 
 /* ============ DESKTOP ============ */
 {

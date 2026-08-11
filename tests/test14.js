@@ -21,7 +21,7 @@ const openSect=async(pg,id)=>{
 function ok(n,c){ (c?pass++:fail++); console.log((c?'  PASS ':'  FAIL ')+n); }
 
 (async()=>{
-  const browser=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+  const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
 
   // ---------- no-JS preview sanity ----------
   {

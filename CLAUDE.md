@@ -17,8 +17,10 @@ Playwright drives the test suite and the two audits. Wrangler deploys.
 ```
 CLAUDE.md                 this file
 package.json              every command you need is a script here
+package-lock.json         pinned devDependencies, so CI installs what you tested
+.gitignore                dist/ and node_modules/
 wrangler.toml             Cloudflare Worker config — [assets] directory = "./dist"
-.github/workflows/        CI: build → lint → test → audit → deploy
+.github/workflows/        deploy.yml — build → lint → test → audit → deploy
 
 src/                      everything a person wrote
   build.js                THE BUILD. Assembles dist/ from everything below.
@@ -177,7 +179,9 @@ npm run check               # build + lint + test + audit, i.e. what CI does
 
 `dist/index.html` opened directly from disk (`file://`) is a complete working app — that is the point of the project — but the service worker, the manifest, install and `navigator.storage.persist()` all need an origin, so use `npm run serve` when touching any of those.
 
-Playwright is pinned to a system Chromium in this environment via `PLAYWRIGHT_BROWSERS_PATH`. On a normal machine `npx playwright install chromium` is enough; the suites launch with an explicit `executablePath` of `/opt/pw-browsers/chromium`, so **that path will need changing on a different machine** — it is the one environment assumption baked into the tests.
+`npx playwright install chromium` and the suites find their own browser — they launch with `executablePath: process.env.CHROMIUM_PATH || undefined`, so Playwright resolves it. That path used to be hardcoded to `/opt/pw-browsers/chromium` in all 32 files, which made a fresh clone fail at the first `chromium.launch` on any other machine.
+
+Set `CHROMIUM_PATH` when you want a specific binary instead. You need it in this container: `PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers` holds a Chromium older than the pinned Playwright expects, so leaving the variable unset sends it looking for a build that is not there. `CHROMIUM_PATH=/opt/pw-browsers/chromium npm test` is the working incantation here; CI installs a matching build and needs nothing.
 
 ## How it deploys
 

@@ -21,7 +21,7 @@ const FX={id:'cx',title:'Collegiate Test',subtitle:'x',tagline:'x',accent:'#7356
  ]}}],
  finalExam:{questions:[{q:'F?',options:['a','b'],answer:0,explain:'e'}]}};
 (async()=>{
-const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
 const p=await (await b.newContext({javaScriptEnabled:true,viewport:{width:390,height:1000}})).newPage();
 const errs=[];p.on('pageerror',e=>errs.push(String(e)));p.on('console',m=>{if(m.type()==='error')errs.push(m.text());});
 await p.goto(URL,{waitUntil:'load'});await p.evaluate(()=>localStorage.clear());

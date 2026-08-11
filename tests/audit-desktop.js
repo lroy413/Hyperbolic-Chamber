@@ -19,7 +19,7 @@ const VIEWPORTS=[
 const SHOT = process.argv.includes('--shots');
 
 (async()=>{
-const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
 const issues=[];const rows=[];
 for(const vp of VIEWPORTS){
  for(const theme of ['dark','light']){

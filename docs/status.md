@@ -8,6 +8,8 @@ Written at the point development moved into Claude Code. Numbers here are measur
 
 **The app.** Six courses, 54 modules, 171 lessons, 1,584 content blocks, 222 knowledge checks — every lesson has at least one. 245 daily warm-up questions. Six specializations defined.
 
+**The repo.** Development happened in a flat working directory; this is the tidied form — sources under `src/`, suites under `tests/`, generated output in `dist/` and not committed. The deployed repo used to hold the built `index.html`, `sw.js` and `catalog/` at its root; those are gone, and the build makes them. They had already drifted, in two ways worth knowing about. The committed `catalog/` held five course files where the source has six — `mkt-2-statements.json` was absent from both the directory and `index.json`, so a written course was not in the store anyone could reach. And the deployed root carried no `manifest.webmanifest` and no `icons/` at all, though `index.html` links to both: install and the PWA icons were 404ing in production. A built `dist/` has all of it, which is the argument for building rather than uploading.
+
 **Content pipeline.** `src/data/store-courses.json` is the single source of truth; the build derives `dist/catalog/` and the store index from it, and `lint-course.js` validates every course against the same rules the in-app importer uses.
 
 **Reading and study.** Lessons with sixteen block types, figures with a full-screen viewer that rotates with the phone, bookmarks, per-lesson notes, text highlighting, a per-course glossary with an A–Z rail, flashcards, a matching game, practice tests, module quizzes at 80% to pass, a final exam, a certificate, and a transcript with credits and a GPA.
@@ -30,19 +32,17 @@ Written at the point development moved into Claude Code. Numbers here are measur
 
 ## Half-built
 
-### The repo migration (this session, incomplete)
+### CI and deploy wiring (written, never run)
 
-Development happened in a flat working directory; this repo is the tidied form of it — sources under `src/`, suites under `tests/`, generated output in `dist/`. The build and 29 of 31 suites were verified in the new layout: **937 checks pass**. Two suites do not run, for path reasons only, and are described under Known bugs. In the flat layout the same code scored 989 across all 31 — 937 + 12 + 40 accounts for every check, so nothing has been lost, only two files left pointing at the old shape.
+`wrangler.toml`, `.github/workflows/deploy.yml` and `.gitignore` now exist, and `package-lock.json` is committed so CI installs the versions the suites were run against. The workflow is one job: `npm ci` → install Chromium → build → lint → test → audit → `wrangler deploy`, with the deploy step gated on a push to `main` so pull requests get everything except the upload. It is one job rather than two so the artifact that ships is the exact `dist/` the suites just ran against.
 
-### CI and deploy wiring (not written yet)
+**Not yet proven.** No run has happened. Before the first one:
 
-`package.json` exists with `build`, `lint`, `test`, `audit`, `check`, `serve` and `deploy` scripts, and `scripts/` holds the runner, the static copier and a local server. Still missing:
+- `CLOUDFLARE_API_TOKEN` (the *Edit Cloudflare Workers* template) and `CLOUDFLARE_ACCOUNT_ID` must exist as GitHub repository secrets. Without them the deploy step fails; everything before it still runs.
+- Confirm `name = "oboros"` in `wrangler.toml` matches the existing Worker exactly. A mismatch creates a second Worker and oboros.app keeps serving the old build, with no error anywhere.
+- Verify by pushing a trivially visible change and watching it reach oboros.app.
 
-- `wrangler.toml` at the repo root with `name` matching the existing Worker exactly and `[assets] directory = "./dist"`.
-- `.github/workflows/deploy.yml` — build → lint → test → audit → `wrangler deploy` on `main`, the same run without deploying on pull requests.
-- `.gitignore` for `dist/` and `node_modules/`.
-- `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as GitHub repository secrets.
-- The old `.github/workflows/catalog.yml` from the deployed repo is now **obsolete and would fight the build** — it regenerates `catalog/index.json` and commits it, but the catalogue is generated output now. Do not carry it over.
+The old `.github/workflows/catalog.yml` from the deployed repo was **not** carried over and must not be: it regenerates `catalog/index.json` and commits it, but the catalogue is generated output now, so it would fight the build.
 
 ### Specializations, mostly unwritten
 
@@ -67,35 +67,25 @@ Deliberately unresolved. You deferred deciding what it is *for*, and that decisi
 
 ---
 
+## Fixed since the handoff
+
+**The two suites that would not run.** `test28.js` required `./renderers.js`, correct in the flat layout and not here — now `../src/renderers.js`, 40 checks. `test23.js` had already been re-pointed at `dist/` but still asserted against the pre-rework store: `.storetitle`/`.storebtn` are `.sttitle`/`.stbtn`, and the course count was hardcoded at five, which outlived the fifth course and asserted nothing afterwards — it now reads `dist/catalog/`. Two of its assertions were also still reading course bodies out of `localStorage`, where they have not lived since bodies moved to IndexedDB. 13 checks, one of them new.
+
+*The lesson worth keeping:* a suite pointed at anything other than the artifact that ships will pass forever and protect nothing.
+
+**The hardcoded Chromium path.** All 32 files launched with `executablePath: '/opt/pw-browsers/chromium'`; they now read `process.env.CHROMIUM_PATH || undefined` and let Playwright resolve its own browser when the variable is unset. `src/make-icons.js` had the same line and got the same change.
+
+**A real bug that the fossilised suite was hiding.** Re-pointing `test23` at where course bodies actually live turned its last failure into a genuine one. `migrateLibrary()` restores a course you have progress in by filtering the catalogue with `c && c.modules`. That was a correct test for "this is a whole course" until catalogue summaries started carrying a module *count* — at which point `9` was truthy, and a learner with existing progress got a bodyless summary pushed into their library. Worse, the same pass sets `have[id] = 1`, which suppressed the async re-fetch that would have healed it: the course page rendered a title, a category and nothing to read, permanently. Four sibling call sites had the same trap and were fixed with it — `persistCourses()` (which is how the summary reached the IndexedDB bodies store), the legacy-body check in `hydrateCourses()`, the post-sign-in re-fetch, and the async branch of `migrateLibrary` itself. `staticCatalogGet()` already carried the `Array.isArray` guard and a comment explaining exactly this; it was the one place that got it.
+
+Two further changes fell out of fixing it. `hydrateCourses()` now ignores bodyless rows coming *out* of IndexedDB, so an install poisoned by the older build heals on the next load instead of carrying the empty course forward — `test23` seeds exactly that state and asserts the real course replaces it. And `persistCourses()` now answers "what do I write" and "what do I keep" separately: bodies only for the first, the whole library for the second. Deriving both from the bodies would have deleted courses during the window where `boot()` hits its 900 ms first-paint deadline and calls `migrateLibrary()` before the IndexedDB read has returned — `imported` is still summaries at that moment, and reading it as the keep-list means "the learner removed five courses".
+
+*The lesson worth keeping:* this is the `modules`-array-versus-count trap named in CLAUDE.md, and it did not announce itself as a crash. It made the app quietly claim to have something it did not have.
+
+---
+
 ## Known bugs
 
-### 1. `test23.js` has been testing a fossil (12 checks)
-
-**What:** the suite served a stale directory containing a build from several versions ago. It passed continuously while asserting things that stopped being true — that the store shows five courses (there are six), and using selectors `.storetitle` and `.storebtn` that the store hierarchy rework replaced. Its first assertion, `STORE_CATALOG.every(c => !c.modules)`, is also now wrong on its own terms: summaries legitimately carry `modules` as a *count*, so `!9` is `false`.
-
-**Repro:** `node tests/test23.js` → three failures, then a 30-second timeout waiting for `.storebtn[data-getcourse="audio-1-acoustics"]`.
-
-**Fix:** re-point the three assertions at the current markup and derive the expected count from `dist/catalog/` rather than hardcoding it. Do not delete the suite — what it checks (that the store fetches the catalogue over HTTP rather than reading the inlined index, and that downloading stores the full body) is not covered anywhere else.
-
-**Lesson worth keeping:** a suite pointed at anything other than the artifact that ships will pass forever and protect nothing.
-
-### 2. `test28.js` cannot resolve `renderers.js` (40 checks)
-
-**What:** it does `require('./renderers.js')`, which was correct in the flat layout and is not now.
-
-**Repro:** `node tests/test28.js` → `MODULE_NOT_FOUND`.
-
-**Fix:** one line — `require('../src/renderers.js')`. `test-merge.js` already has this change; `test28.js` was missed.
-
-### 3. Every suite hardcodes a Chromium path
-
-**What:** all 32 test files launch with `executablePath: '/opt/pw-browsers/chromium'`, which is this build environment's system Chromium.
-
-**Repro:** run any suite on a machine without that path → launch fails immediately.
-
-**Fix:** read it from an env var with a fallback, e.g. `executablePath: process.env.CHROMIUM_PATH || undefined`, letting Playwright use its own download when unset. This is the single thing most likely to make the handoff feel broken on first run.
-
-### 4. Study hours are not supported by the content
+### 1. Study hours are not supported by the content
 
 **What:** each course claims 37–48 hours. Actual reading time, measured from the words, is 1.2–4 hours. The ratio runs 11× to 37×.
 
@@ -112,23 +102,21 @@ Hours come from a guess of 1.15 hours per lesson, and hours drive credits, which
 
 **Not a crash — a claim the app cannot support.** Both numbers are now visible in the interface, though never joined by a sentence connecting them, which is the most honest thing available short of deciding. Resolving it means deciding what the certificate attests to.
 
-### 5. `manifest.webmanifest` sets `"id": "/"`
+### 2. `manifest.webmanifest` sets `"id": "/"`
 
 Correct while the app is served from the origin root, which it is. It would silently split the install identity if the app were ever served from a subpath. Worth knowing before anyone hosts a staging copy under a path.
 
 ---
 
-## The next five things, in order
+## The next four things, in order
 
-**1. Make the repo run on a machine that is not this one.** Fix the two path bugs (#1, #2) and the hardcoded Chromium path (#3), then run `npm run check` end to end and confirm 989. Nothing else matters until a clean clone builds, tests and audits green. Half a day.
+**1. Prove the deploy.** The wiring is written; nothing has run it. Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as repository secrets, confirm `name = "oboros"` matches the existing Worker in the Cloudflare dashboard, then push a trivially visible change and watch it reach oboros.app. Until that has happened once, the deploy path is untested — and a `name` mismatch fails by silently creating a second Worker rather than by erroring.
 
-**2. Write the deploy wiring and prove it.** `wrangler.toml`, `.github/workflows/deploy.yml`, `.gitignore`, the two GitHub secrets. Verify by pushing a trivial visible change and watching it reach oboros.app. Confirm `name` matches the existing Worker before the first run — a mismatch creates a second Worker and oboros.app keeps serving the old build with no error anywhere. Do not carry over the old `catalog.yml`.
+**2. Decide what the certificate is for, then fix hours and credits.** This is one decision with three dependent numbers (hours → credits → GPA → certificate). The options are roughly: make hours honest and accept that a course is worth a fraction of a credit; keep hours as a study estimate and add the practice that would justify them; or drop the academic framing and let the certificate attest to completion rather than to hours. Everything in #3 is easier once this is settled.
 
-**3. Decide what the certificate is for, then fix hours and credits.** This is one decision with three dependent numbers (hours → credits → GPA → certificate). The options are roughly: make hours honest and accept that a course is worth a fraction of a credit; keep hours as a study estimate and add the practice that would justify them; or drop the academic framing and let the certificate attest to completion rather than to hours. Everything in #4 is easier once this is settled.
+**3. Write the eighteen missing courses, or cut the tracks that have none.** Two specializations are entirely empty and one is 20% written. "Coming soon" is honest but a Survival track with eight placeholders reads as abandonment. Either generate them from the existing prompts or reduce the tracks to what exists.
 
-**4. Write the eighteen missing courses, or cut the tracks that have none.** Two specializations are entirely empty and one is 20% written. "Coming soon" is honest but a Survival track with eight placeholders reads as abandonment. Either generate them from the existing prompts or reduce the tracks to what exists.
-
-**5. Provision Supabase and actually test sync.** The whole accounts layer has never met a database. At minimum: run the setup SQL, fill in the two config values, sign in on two devices, verify the merge does not lose progress, and verify the error paths — drop the table and confirm the app says "the user_state table is missing" rather than "up to date."
+**4. Provision Supabase and actually test sync.** The whole accounts layer has never met a database. At minimum: run the setup SQL, fill in the two config values, sign in on two devices, verify the merge does not lose progress, and verify the error paths — drop the table and confirm the app says "the user_state table is missing" rather than "up to date."
 
 ---
 

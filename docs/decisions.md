@@ -22,6 +22,8 @@ Every real fork in this project, what was chosen, and what was rejected. Newest 
 
 **Consequence:** a catalogue summary and a full course are *different shapes*, and the app has to handle both. See the `modules`-is-a-number trap in CLAUDE.md.
 
+**Chosen since:** every test for "is this a whole course" is `Array.isArray(c.modules) && c.modules.length`, never `c.modules`. The truthiness form was correct while summaries had no such field, and went silently wrong the day summaries gained a module *count* — `9` is truthy, so `migrateLibrary` restored bodyless summaries into people's libraries and then suppressed the re-fetch that would have healed them. **Rejected:** renaming the count field on summaries to something like `moduleCount` so the two shapes could never collide. It is the cleaner fix and it is a breaking change to the catalogue format, every persisted body and every store card at once, to buy what one correct predicate already buys. Revisit if the shapes collide a third time.
+
 ### IndexedDB for bodies, localStorage for state
 
 **Chosen:** course bodies in IndexedDB (`oboros_courses`/`bodies`), everything small and frequently written in localStorage under `courseapp_v1`.
