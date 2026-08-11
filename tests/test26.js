@@ -97,7 +97,23 @@ ok('progress still saves offline', await p.evaluate(x=>JSON.parse(localStorage.g
 await p.evaluate(()=>{location.hash='#c/personal-finance/m1-quiz';});await p.waitForTimeout(700);
 ok('a quiz works offline', await p.locator('.quizwrap .opt').count()>0);
 
-ok('offline notice appears', await p.evaluate(()=>{window.dispatchEvent(new Event('offline'));return true;}) && await (async()=>{await p.waitForTimeout(300);return await p.locator('#offbar.show').count()>0;})());
+/* The app decides it is offline from `navigator.onLine === false`, so the test
+   has to make that true rather than assume the harness has. It used to rely on
+   ctx.setOffline() alone, which stopped working at Chromium 151: reloading a
+   file:// page under an offline context now leaves navigator.onLine === true,
+   where 141 left it false. The page loads off local disk and needs no network,
+   so the browser is not wrong — the assertion was reading the harness instead
+   of the thing it meant to check. Override it here, dispatch the event the app
+   listens for, and put it back. */
+ok('offline notice appears', await (async()=>{
+  await p.evaluate(()=>{
+    Object.defineProperty(navigator,'onLine',{get:function(){return false;},configurable:true});
+    window.dispatchEvent(new Event('offline'));
+  });
+  await p.waitForTimeout(300);
+  const shown=await p.locator('#offbar.show').count()>0;
+  await p.evaluate(()=>{delete navigator.onLine;});
+  return shown;})());
 
 await p.evaluate(()=>{location.hash='#settings';});await p.waitForTimeout(600);
 await openSect(p,'set-offline');

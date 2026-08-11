@@ -15,6 +15,22 @@ const d=n=>{const x=new Date();x.setDate(x.getDate()+n);return x.toISOString().s
 let pass=0,fail=0;
 function ok(n,c){(c?pass++:fail++);console.log((c?'  PASS ':'  FAIL ')+n);}
 
+/* The letter rail scrolls with behavior:'smooth', and the glossary is long
+   enough that a jump can be 16,000px. A fixed wait guesses at how long that
+   takes, and the guess stopped being right at Chromium 151 — 900 ms landed
+   mid-flight and the assertion read whichever letter it was passing. Wait for
+   the position to stop changing instead of for a duration. */
+async function scrollSettled(page,timeoutMs){
+  const deadline=Date.now()+(timeoutMs||8000);
+  let last=null,still=0;
+  while(Date.now()<deadline){
+    const y=await page.evaluate(()=>Math.round(window.scrollY));
+    if(y===last){ if(++still>=3) return y; } else { still=0; last=y; }
+    await page.waitForTimeout(100);
+  }
+  return last;
+}
+
 (async()=>{
 const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined});
 const ctx=await b.newContext({viewport:{width:393,height:852},hasTouch:true});
@@ -82,7 +98,7 @@ ok('no letter button is under 44px', await p.evaluate(()=>
   [...document.querySelectorAll('.azb')].every(e=>{
     const r=e.getBoundingClientRect();return r.width>=44&&r.height>=44;})));
 ok('tapping a letter lands on that letter', await (async()=>{
-  await p.locator('.azb[data-az="S"]').click();await p.waitForTimeout(900);
+  await p.locator('.azb[data-az="S"]').click();await scrollSettled(p);
   return await p.evaluate(()=>{
     const bar=document.querySelector('.topbar').getBoundingClientRect().height;
     const first=[...document.querySelectorAll('.glh')].find(h=>h.getBoundingClientRect().top>=bar-3);

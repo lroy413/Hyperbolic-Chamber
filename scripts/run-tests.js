@@ -25,9 +25,23 @@ for(const f of files){
     console.log(f.padEnd(14)+m[0]);
     if(parseInt(m[2],10)>0)out.split('\n').filter(l=>/FAIL/.test(l)).forEach(l=>console.log('    '+l.trim()));
   }else{
-    failed.push(f);
+    if(!failed.includes(f))failed.push(f);
     console.log(f.padEnd(14)+'NO RESULT');
-    console.log(out.split('\n').slice(-12).map(l=>'    '+l).join('\n'));
+    /* A suite that dies mid-run reports through this branch, and it is usually
+       the only record you get — a CI failure you cannot reproduce locally is
+       diagnosed from these lines or not at all. The tail alone was not enough:
+       a Playwright timeout names the selector it was waiting for in its FIRST
+       line and spends the rest on retry noise, so the tail printed 58 identical
+       "retrying click action" entries and cut off the one fact worth having.
+       Print the head as well, and the last assertion that did pass — that is
+       where the suite actually got to. */
+    const lines=out.split('\n');
+    const lastPass=lines.filter(l=>/^\s*(PASS|--)/.test(l)).slice(-3);
+    if(lastPass.length){console.log('    ...got as far as:');lastPass.forEach(l=>console.log('    '+l.trim()));}
+    console.log('    --- first 20 lines of the failure ---');
+    console.log(lines.filter(l=>!/^\s*PASS/.test(l)).slice(0,20).map(l=>'    '+l).join('\n'));
+    console.log('    --- last 8 ---');
+    console.log(lines.slice(-8).map(l=>'    '+l).join('\n'));
   }
 }
 console.log('\n'+total+' checks passed'+(failed.length?', suites failed: '+failed.join(' '):', nothing failed'));

@@ -26,7 +26,7 @@ Written at the point development moved into Claude Code. Numbers here are measur
 
 **Design system.** Six type sizes, four weights, three radii plus pills, three elevations, three lit edges, four ink tones, one icon set, one progress ring, one accent per page, mark-generated course covers, a focal home layout, and three celebration moments. Enforced by `tests/test40.js` rather than by discipline.
 
-**Verification.** 31 Playwright suites and two audits — 990 checks, all passing from a clean clone. Both audits sit at zero issues across twelve routes, both themes, four viewport widths — contrast, tap targets, text size, overflow and line length.
+**Verification.** 31 Playwright suites and two audits — 990 checks, passing locally against both Chromium 141 and 151. Both audits sit at zero issues across twelve routes, both themes, four viewport widths — contrast, tap targets, text size, overflow and line length. **Not yet green on CI**: see the entry under Known bugs. The first run on a machine that was not this one found four suites the pinned-browser era had hidden.
 
 ---
 
@@ -87,11 +87,34 @@ Two further changes fell out of fixing it. `hydrateCourses()` now ignores bodyle
 
 *The lesson worth keeping:* this is the `modules`-array-versus-count trap named in CLAUDE.md, and it did not announce itself as a crash. It made the app quietly claim to have something it did not have.
 
+**Two suites that were reading the harness instead of the app.** Unpinning the browser meant the suites met Chromium 151 instead of the 141 they had always run against, and two of them had been depending on 141's behaviour without saying so. Both are now verified against both builds.
+
+`test26` asserted the offline notice by calling `ctx.setOffline(true)` and trusting `navigator.onLine`. At 151, reloading a `file://` page under an offline context leaves `navigator.onLine === true` — the document comes off local disk and needs no network, so the browser is arguably right and 141 was the odd one. Every offline assertion before it still passed, because they test cached content rather than the flag. The fix makes the test state the condition it means to test: override `navigator.onLine`, dispatch the event the app listens for, put it back.
+
+`test38` clicked a letter in the glossary rail and waited a fixed 900 ms. The rail scrolls with `behavior:'smooth'` and the jump can be 16,000px; at 151 that animation is slower, so the assertion read whichever heading it was flying past — it wanted S and got Q. It now waits for `scrollY` to stop changing rather than for a duration.
+
+*The lesson worth keeping:* a fixed `waitForTimeout` after an animation is a guess about a browser's frame budget, and `navigator.onLine` under an emulated-offline harness is not the same claim as "the user is offline". Both suites passed for as long as exactly one browser ran them.
+
 ---
 
 ## Known bugs
 
-### 1. Study hours are not supported by the content
+### 1. `test13` and `test22` fail on CI and have never failed here
+
+**What:** the first GitHub Actions run scored **929, not 990**. Four suites failed. Two are fixed and described under Fixed. These two are not: both died on a click that never became clickable, and neither reproduces on this machine — not against Chromium 151, the build CI uses, and not pinned to a single core.
+
+**What CI said**, which is all we have:
+
+- `test13` — `TimeoutError`, "element is not visible", the click retried 58 times.
+- `test22` — `<a class="tab" href="#review">` from `<div id="navroot">` "intercepts pointer events", then "element is not enabled" 56 times.
+
+**The second one is a lead worth following.** `#navroot` is the fixed bottom tab bar. Playwright scrolls a target into view before clicking, but an element at the very end of the document *cannot* be scrolled clear of a bar fixed to the bottom of the viewport — so that interception may be a real overlap a real thumb would also hit, not a test artefact. The "element is not enabled" that follows is consistent with a swallowed first click leaving a submit button disabled, which would make the second error a symptom of the first.
+
+**Why it was not diagnosed:** `run-tests.js` printed only the last 12 lines of a dead suite, and a Playwright timeout puts the selector in its *first* line and spends the rest on retry noise. So the log recorded 58 copies of "retrying click action" and discarded the one fact needed. That is fixed — the runner now prints the last assertions that passed, the head of the failure, and the tail. **The next CI run should name the selector.** Start there.
+
+**Do not "fix" this with `force:true`.** If the tab bar really is covering the control, forcing the click hides a bug a learner would hit with their thumb.
+
+### 2. Study hours are not supported by the content
 
 **What:** each course claims 37–48 hours. Actual reading time, measured from the words, is 1.2–4 hours. The ratio runs 11× to 37×.
 
@@ -108,7 +131,7 @@ Hours come from a guess of 1.15 hours per lesson, and hours drive credits, which
 
 **Not a crash — a claim the app cannot support.** Both numbers are now visible in the interface, though never joined by a sentence connecting them, which is the most honest thing available short of deciding. Resolving it means deciding what the certificate attests to.
 
-### 2. `manifest.webmanifest` sets `"id": "/"`
+### 3. `manifest.webmanifest` sets `"id": "/"`
 
 Correct while the app is served from the origin root, which it is. It would silently split the install identity if the app were ever served from a subpath. Worth knowing before anyone hosts a staging copy under a path.
 
