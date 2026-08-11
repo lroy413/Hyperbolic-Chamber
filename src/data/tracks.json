@@ -1,0 +1,451 @@
+[
+ {
+  "id": "web",
+  "title": "Software & Web Engineering",
+  "tagline": "From the first HTTP request to shipping a full-stack feature.",
+  "accent": "#4f7cff",
+  "about": "This specialization builds a working engineer, not a tutorial follower. You start at the wire — what actually happens between a browser and a server — then work up through semantic HTML and accessibility, the CSS cascade, the JavaScript runtime and its event loop, asynchronous data, REST APIs, relational databases, security, and testing. The through-line is that every abstraction you use rests on a mechanism you can understand, and knowing the mechanism is what separates someone who can debug a production incident from someone who can only follow a recipe.",
+  "outcomes": [
+   "Trace any request end to end and reason about where a bug actually lives",
+   "Write semantic, accessible, responsive interfaces without a framework crutch",
+   "Model data, design an API contract, and back it with a sane database schema",
+   "Ship a full-stack feature with tests, auth, and a deployment story"
+  ],
+  "careers": [
+   [
+    "Front-end engineer",
+    "Builds the interface layer — markup, styling systems, state, and performance. The accessibility and CSS-architecture modules are the daily work of this role."
+   ],
+   [
+    "Full-stack developer",
+    "Owns a feature from schema to screen. The most common title for people who complete a path like this one."
+   ],
+   [
+    "Freelance app builder",
+    "Takes projects end to end for clients. The capstone — scoping, building, and shipping a real feature — is deliberately modelled on this."
+   ],
+   [
+    "Technical founder",
+    "Builds the first version of a product themselves. Needs exactly this breadth: enough front-end to make it usable, enough back-end to make it real."
+   ]
+  ],
+  "reading": [
+   [
+    "MDN Web Docs",
+    "The reference professionals actually use. Read it instead of tutorials when you want the truth about an API."
+   ],
+   [
+    "Designing Data-Intensive Applications — Martin Kleppmann",
+    "Where to go after the database module. The best book on how real systems store and move data."
+   ],
+   [
+    "Refactoring — Martin Fowler",
+    "Teaches you to improve code that already works, which is most of the job."
+   ],
+   [
+    "OWASP Top Ten",
+    "A free, continually updated list of the vulnerabilities that actually get exploited. Read it once a year."
+   ],
+   [
+    "High Performance Browser Networking — Ilya Grigorik",
+    "Free online, and the deepest accessible treatment of the network layer the first module introduces."
+   ]
+  ],
+  "related": [
+   "markets"
+  ],
+  "courseIds": [
+   "app-builder"
+  ]
+ },
+ {
+  "id": "markets",
+  "title": "Markets & Money",
+  "tagline": "Build a financial foundation, then learn to read the tape.",
+  "accent": "#12b58f",
+  "about": "This specialization builds the ability to read money at three levels: your own, a company's, and a market's. It opens with the quantitative foundations of household finance — cash flow, the time value of money, debt, tax and the mechanics of retirement accounts — then moves to the language businesses report in, teaching accrual accounting, the three financial statements and the specific ways a set of accounts can be technically true and still mislead. It closes with the market itself: price action, technical analysis, market microstructure and the risk mathematics that determines whether a strategy survives contact with reality. The through-line is that money is measured in three registers that use the same arithmetic and different conventions, and that most costly mistakes come from applying one register's intuitions to another.",
+  "outcomes": [
+   "Build and defend a household financial plan grounded in the time value of money rather than in rules of thumb",
+   "Read a balance sheet, income statement and cash flow statement, and verify that the three articulate correctly",
+   "Compute the ratios that carry information — margins, ROIC, the cash conversion cycle, coverage — and decompose any change into its causes",
+   "Identify the four levers by which reported results are flattered, and rebuild adjusted earnings yourself rather than accepting management's",
+   "Read price and volume structure, and state what each charting convention hides as well as what it shows",
+   "Size a position against an explicit risk budget and explain why the arithmetic of drawdown dominates the arithmetic of return"
+  ],
+  "careers": [
+   [
+    "Self-directed investor",
+    "The most common and most valuable outcome. Managing your own money competently is worth more than most side incomes."
+   ],
+   [
+    "Financial analyst",
+    "Values companies and builds models. The quantitative foundation here is the entry requirement."
+   ],
+   [
+    "Active / discretionary trader",
+    "Trades their own capital. The market-structure and risk modules are the survivable core of this work."
+   ],
+   [
+    "Financial coach or planner",
+    "Helps others build the plan. Requires exactly the debt, tax, and allocation mechanics this track drills."
+   ]
+  ],
+  "reading": [
+   [
+    "The Psychology of Money — Morgan Housel",
+    "Why financial outcomes hinge on behaviour more than spreadsheets. Read it alongside the first course."
+   ],
+   [
+    "A Random Walk Down Wall Street — Burton Malkiel",
+    "The strongest case for index investing and against overtrading — worth reading precisely because it argues with the second course."
+   ],
+   [
+    "Technical Analysis of the Financial Markets — John Murphy",
+    "The standard reference for chart structure. Dense, but the definitive version of what the second course introduces."
+   ],
+   [
+    "Trading in the Zone — Mark Douglas",
+    "On probabilistic thinking and why discipline, not indicators, is the edge."
+   ],
+   [
+    "The Bogleheads' Guide to Investing",
+    "A plain, practical implementation of the low-fee, diversified approach the fee module argues for."
+   ],
+   [
+    "Financial Statement Analysis and Security Valuation — Stephen Penman",
+    "The standard graduate text. Dense, rigorous, and the best single source on how accounting numbers connect to value."
+   ],
+   [
+    "Financial Shenanigans — Howard Schilit",
+    "A catalogue of the specific techniques by which accounts mislead, organised by mechanism and illustrated with real cases."
+   ]
+  ],
+  "related": [
+   "influence"
+  ],
+  "courseIds": [
+   "personal-finance",
+   "mkt-2-statements",
+   "stock-charts"
+  ]
+ },
+ {
+  "id": "influence",
+  "title": "Communication & Influence",
+  "tagline": "Negotiate and persuade with a repeatable framework.",
+  "accent": "#d6409f",
+  "about": "Negotiation taught as a discipline rather than a personality trait. You learn to prepare — establishing your BATNA, mapping the zone of possible agreement, separating positions from the interests underneath them — and then to run the conversation itself: asking questions that surface information, using objective standards instead of stubbornness, handling hardball tactics without escalating, and closing in a way that survives contact with reality. The core insight is that most people lose negotiations before they start, by failing to prepare, and that the fix is a process anyone can run.",
+  "outcomes": [
+   "Prepare any negotiation with a defined BATNA, reservation point, and target",
+   "Uncover the interests behind a stated position and trade on differences",
+   "Anchor and concede deliberately instead of reactively",
+   "Recognise and defuse common hardball tactics without damaging the relationship"
+  ],
+  "careers": [
+   [
+    "Sales and account management",
+    "Negotiates daily and gets measured on it. The interest-mapping and closing modules are the job."
+   ],
+   [
+    "Manager or team lead",
+    "Spends most of the week negotiating scope, resources, and expectations without formal authority."
+   ],
+   [
+    "Founder or business owner",
+    "Negotiates with customers, suppliers, landlords, and investors — usually with asymmetric information and a weak BATNA."
+   ],
+   [
+    "Anyone with a salary",
+    "Compensation conversations are the highest hourly-rate negotiation most people will ever run, and the one they prepare for least."
+   ]
+  ],
+  "reading": [
+   [
+    "Getting to Yes — Fisher, Ury & Patton",
+    "The Harvard Negotiation Project book this course's principled-negotiation framework comes from."
+   ],
+   [
+    "Never Split the Difference — Chris Voss",
+    "The tactical, empathy-driven counterpoint from an FBI hostage negotiator. Read it against Getting to Yes, not after it."
+   ],
+   [
+    "Influence: The Psychology of Persuasion — Robert Cialdini",
+    "The research behind why the tactics in the hardball module work on people."
+   ],
+   [
+    "Difficult Conversations — Stone, Patton & Heen",
+    "For the negotiations that are actually about a relationship, not a price."
+   ],
+   [
+    "Thinking, Fast and Slow — Daniel Kahneman",
+    "Anchoring, framing, and loss aversion from the source. Explains the cognitive machinery the course exploits."
+   ]
+  ],
+  "related": [
+   "markets"
+  ],
+  "courseIds": [
+   "everyday-negotiation"
+  ]
+ },
+ {
+  "id": "film",
+  "title": "Directing & Cinematography",
+  "tagline": "A conservatory-style path from visual language to a finished sequence.",
+  "accent": "#7356f0",
+  "about": "A conservatory sequence compressed into five courses, braiding the two crafts that decide what a film feels like. You begin with visual language — how shots mean things, how continuity works, why coverage exists — then take the camera apart: sensors, lenses, exposure, and depth of field as expressive choices rather than settings. Lighting and colour follow, because light is the actual medium. Then the director's side: script analysis, working with actors, and blocking that comes from character instead of convenience. The final course puts it together from prep through post, ending in a finished sequence you can show.",
+  "outcomes": [
+   "Break down a scene shot by shot and articulate why each choice was made",
+   "Choose a lens, stop, and camera height for a specific emotional effect",
+   "Light a face to a defined ratio and build a consistent look",
+   "Block a scene, shot-list it, and carry it through edit and grade"
+  ],
+  "careers": [
+   [
+    "Director",
+    "Owns the story and the performances, and decides where the camera goes. The staging and actor modules are the centre of this role."
+   ],
+   [
+    "Cinematographer / DP",
+    "Owns the image — lensing, exposure, lighting, and the look. Courses two and three are this job's foundation."
+   ],
+   [
+    "Camera operator or 1st AC",
+    "Executes the frame and holds focus. Requires the optical and exposure fluency taught in course two."
+   ],
+   [
+    "Gaffer / lighting technician",
+    "Builds the light the DP designs. Course three is the direct training for it."
+   ],
+   [
+    "Commercial, doc and music-video director",
+    "Where most working directors actually earn. The full prep-to-post pipeline in course five is the day-to-day."
+   ]
+  ],
+  "reading": [
+   [
+    "In the Blink of an Eye — Walter Murch",
+    "A short, brilliant book on why cuts work. Read it early; it reframes everything about coverage."
+   ],
+   [
+    "Painting with Light — John Alton",
+    "The classic on lighting for mood, written by the cinematographer who defined film noir."
+   ],
+   [
+    "Cinematography: Theory and Practice — Blain Brown",
+    "The standard technical reference for lensing, exposure, and lighting workflow."
+   ],
+   [
+    "Making Movies — Sidney Lumet",
+    "The clearest account of what a director actually does, day by day, from a master."
+   ],
+   [
+    "On Directing Film — David Mamet",
+    "Severe, opinionated, and the best short argument for telling story through shot juxtaposition."
+   ],
+   [
+    "American Cinematographer",
+    "The monthly magazine where working DPs explain exactly how recent films were shot."
+   ]
+  ],
+  "related": [
+   "influence"
+  ],
+  "courseIds": [
+   "film-1-visual-language",
+   "film-2-camera-lens-exposure",
+   "film-3-lighting-color",
+   "film-4-directing-actors-staging",
+   "film-5-production-post"
+  ]
+ },
+ {
+  "id": "audio",
+  "title": "Audio Engineering",
+  "tagline": "From the physics of a pressure wave to a mastered release.",
+  "accent": "#f0883e",
+  "about": "Audio engineering is where physics, perception, and craft meet: the same decibel that is a ratio on paper is a judgement call at a fader. This track is sequenced the way a conservatory teaches it — the science first, because every later decision depends on it. You begin with sound as a measurable physical event and with digital audio's hard limits, then learn to capture sound with microphones and a clean signal chain, then to balance and shape it, then to place it in space with time-based processing, and finally to finish and deliver it to modern loudness standards. The recurring theme is that almost every 'creative' choice in audio is a physical consequence you can predict once you understand the mechanism underneath it.",
+  "outcomes": [
+   "Reason quantitatively about level, frequency, phase, and room behaviour instead of guessing",
+   "Choose and place microphones for a defined result, and keep a signal chain clean end to end",
+   "Diagnose a mix by ear and by meter, and fix the cause rather than the symptom",
+   "Deliver masters that meet broadcast and streaming loudness specifications"
+  ],
+  "careers": [
+   [
+    "Recording / tracking engineer",
+    "Captures performances — mic selection, placement, gain structure, and session flow. Courses 1 and 2 are the direct training."
+   ],
+   [
+    "Mix engineer",
+    "Turns raw multitracks into a finished balance using EQ, dynamics, and space. Courses 3 and 4 are the core of this role."
+   ],
+   [
+    "Mastering engineer",
+    "Prepares the final master for every delivery format and loudness target. Course 5, built on the metering and psychoacoustics of course 1."
+   ],
+   [
+    "Live sound engineer",
+    "Runs front-of-house or monitors in a real room. Leans hardest on the acoustics, gain-staging, and feedback/phase material."
+   ],
+   [
+    "Post-production / dialogue editor",
+    "Cleans and balances audio for film and television, where intelligibility and loudness compliance are the job."
+   ],
+   [
+    "Producer / artist-engineer",
+    "Records and finishes their own work. Needs the whole chain, which is exactly what this track covers."
+   ]
+  ],
+  "reading": [
+   [
+    "Master Handbook of Acoustics — F. Alton Everest & Ken Pohlmann",
+    "The standard reference for room behaviour, modes, and treatment. Pairs directly with the acoustics modules."
+   ],
+   [
+    "Sound Reproduction — Floyd Toole",
+    "The research-grounded account of how rooms and loudspeakers interact with perception. Read it before buying any acoustic treatment."
+   ],
+   [
+    "Modern Recording Techniques — Huber & Runstein",
+    "The broad practical survey of the studio signal chain; the best single companion to courses 2 and 3."
+   ],
+   [
+    "Mixing Secrets for the Small Studio — Mike Senior",
+    "The most useful practical mixing book for people not working in a treated room. Method over mystique."
+   ],
+   [
+    "Mastering Audio: The Art and the Science — Bob Katz",
+    "The definitive treatment of loudness, metering, and finishing, and the origin of the K-system."
+   ],
+   [
+    "ITU-R BS.1770 and EBU R 128",
+    "The actual loudness-measurement standards streaming and broadcast are built on. Read the specifications, not blog summaries."
+   ],
+   [
+    "An Introduction to the Psychology of Hearing — Brian C. J. Moore",
+    "Why masking, critical bands, and loudness perception behave as they do — the perceptual basis for every EQ move."
+   ]
+  ],
+  "related": [
+   "film"
+  ],
+  "courseIds": [
+   "audio-1-acoustics",
+   "audio-2-microphones",
+   "audio-3-mixing",
+   "audio-4-effects",
+   "audio-5-mastering"
+  ]
+ },
+ {
+  "id": "survival",
+  "title": "Survival: Wilderness, Sea & Systems Collapse",
+  "tagline": "The physiology, decision-making and craft of staying alive when help is not coming.",
+  "accent": "#d1483f",
+  "about": "Survival is not a bag of tricks. It is applied physiology, thermodynamics, decision science and logistics, practised by someone whose margin for error has been removed. This specialization builds that discipline in order: first the quantitative models of how a human body loses heat, water and energy, then the craft that changes those numbers, then austere medicine, navigation and rescue, food, and the way each biome reorders the priorities. It ends where survival stops being an individual problem — an abandoned ship, an island you cannot leave, or a region whose water, power and medicine have stopped arriving. Throughout, the course argues with the folklore: the rule of threes, the universal edibility test, field snakebite treatment, and the belief that disaster turns neighbours feral are all examined against the evidence rather than repeated. This is education, not certification, and it says so plainly wherever a technique is dangerous to attempt untrained.",
+  "outcomes": [
+   "Rank what will kill you first in an unfamiliar situation, and show the arithmetic — heat balance, water budget, calorie budget — rather than reciting a mnemonic",
+   "Design water, fire and shelter interventions justified against a heat-loss estimate and costed in the calories and water they consume",
+   "Assess a casualty in the field, distinguish evacuate-now from treat-and-monitor, and reason about care when evacuation is genuinely impossible",
+   "Navigate by map, by sky and by nothing at all — and make a defensible stay-or-go decision using how searches are actually run",
+   "Evaluate wild food by net calorie return and identify to species, including the toxic families and the look-alikes that kill",
+   "Adapt the whole priority stack to desert, cold, alpine, jungle, coastal and urban environments and defend the differences",
+   "Work the maritime problem quantitatively: cold-shock physiology, raft rationing, still yield, drift estimation and landfall",
+   "Plan household and community resilience across years without grid water, power, refrigeration or pharmacy — and know which failure modes your plan cannot solve"
+  ],
+  "careers": [
+   [
+    "Wilderness EMT / WFR",
+    "Provides medical care hours to days from definitive care, on expeditions, in SAR teams and on backcountry crews. Courses 1, 3 and 6 are their working knowledge."
+   ],
+   [
+    "Expedition & outdoor leader",
+    "Runs multi-week trips for NOLS, Outward Bound or commercial operators, where risk management and weather judgement matter more than any single skill. Built on Courses 1, 4 and 6."
+   ],
+   [
+    "Search and rescue team member",
+    "Plans and executes searches, applies lost-person behaviour statistics and manages containment. Course 4 is the core; Course 3 covers the casualty they find."
+   ],
+   [
+    "Humanitarian WASH engineer",
+    "Delivers water, sanitation and shelter at population scale for MSF, IFRC or UN agencies against Sphere standards. Courses 2, 3 and 8."
+   ],
+   [
+    "Emergency manager / continuity planner",
+    "Prepares municipalities, hospitals and companies for the loss of infrastructure, and runs the response. Course 8 is their whole job; Course 1 explains the human behaviour."
+   ],
+   [
+    "Maritime safety officer",
+    "Runs abandon-ship drills, maintains survival equipment and trains crews to STCW standard on commercial and offshore vessels. Course 7."
+   ],
+   [
+    "Remote field researcher",
+    "Works in polar, desert, marine or jungle sites where self-sufficiency is a condition of the work. Courses 1, 4, 6 and 7."
+   ]
+  ],
+  "reading": [
+   [
+    "Auerbach's Wilderness Medicine — Paul S. Auerbach (ed.)",
+    "The definitive clinical reference for medicine beyond the reach of a hospital. Expensive and enormous; read the environmental-injury chapters."
+   ],
+   [
+    "Essentials of Sea Survival — Frank Golden & Michael Tipton",
+    "The scientific account of cold-water immersion. It is the source that corrects almost every popular belief about drowning and hypothermia."
+   ],
+   [
+    "Deep Survival: Who Lives, Who Dies, and Why — Laurence Gonzales",
+    "On why competent people make fatal decisions. Read it for the psychology; treat the neuroscience as illustrative rather than rigorous."
+   ],
+   [
+    "Survival Psychology — John Leach",
+    "The academic treatment of how people actually behave under threat, including the 10-80-10 response distribution and cognitive paralysis."
+   ],
+   [
+    "Bushcraft: Outdoor Skills and Wilderness Survival — Mors Kochanski",
+    "Boreal craft written by someone who tested everything. Notable for saying which classic techniques are not worth the calories."
+   ],
+   [
+    "The Forager's Harvest — Samuel Thayer",
+    "The most rigorous popular writing on wild food, and the strongest published argument against the Universal Edibility Test."
+   ],
+   [
+    "Island of the Lost — Joan Druett",
+    "Two ships wrecked on the same subantarctic island in the same year. One crew organised and survived; the other did not. The best available natural experiment in survival leadership."
+   ],
+   [
+    "The Knowledge: How to Rebuild Our World from Scratch — Lewis Dartnell",
+    "What technologies a society would need to recover, and in what order. The spine of the collapse course."
+   ],
+   [
+    "A Paradise Built in Hell — Rebecca Solnit",
+    "The disaster-sociology evidence that communities overwhelmingly cooperate after catastrophe, against a popular imagination that insists otherwise."
+   ],
+   [
+    "The Sphere Handbook — Sphere Association",
+    "Free. The humanitarian minimum standards for water, sanitation, shelter and nutrition — the numbers any serious resilience plan is measured against."
+   ]
+  ],
+  "related": [],
+  "courseIds": [
+   "surv-1-physiology",
+   "surv-2-core-craft",
+   "surv-3-medicine",
+   "surv-4-navigation",
+   "surv-5-food",
+   "surv-6-environments",
+   "surv-7-sea",
+   "surv-8-collapse"
+  ],
+  "courseTitles": {
+   "surv-1-physiology": "The Survival Equation: Physiology, Risk & Decision",
+   "surv-2-core-craft": "Water, Fire & Shelter: The Core Craft",
+   "surv-3-medicine": "Wilderness & Austere Medicine",
+   "surv-4-navigation": "Navigation, Signalling & Rescue",
+   "surv-5-food": "Food: Foraging, Fishing, Trapping & Preservation",
+   "surv-6-environments": "Environment-Specific Survival",
+   "surv-7-sea": "At Sea and Cast Away: Maritime & Island Survival",
+   "surv-8-collapse": "When the Grid Fails: Infrastructure Collapse"
+  }
+ }
+]

@@ -1,0 +1,20 @@
+{
+  "name": "oboros",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Oboros — a self-paced learning app that works offline. One built HTML file, deployed to oboros.app.",
+  "scripts": {
+    "build": "node src/build.js && node src/make-icons.js && node scripts/copy-static.js",
+    "lint": "node src/lint-course.js",
+    "test": "node scripts/run-tests.js",
+    "audit": "node tests/audit.js && node tests/audit-desktop.js",
+    "check": "npm run build && npm run lint && npm test && npm run audit",
+    "serve": "node scripts/serve.js",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "playwright": "^1.48.0",
+    "wrangler": "^3.90.0"
+  },
+  "engines": { "node": ">=20" }
+}
