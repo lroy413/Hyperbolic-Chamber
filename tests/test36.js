@@ -242,6 +242,7 @@ const rw=await p.evaluate(()=>{
   const ring=document.querySelector('.rwhero .snkring svg');
   return {hero:!!document.querySelector('.rwhero'),
     arcs:ring?ring.querySelectorAll('path').length:0,
+    widths:ring?[...ring.querySelectorAll('path')].map(p=>parseFloat(p.getAttribute('stroke-width'))):[],
     head:ring?ring.querySelectorAll('circle').length:0,
     say:(document.querySelector('.rwsay')||{}).textContent||'',
     tiles:document.querySelectorAll('.qtile').length,
@@ -251,7 +252,17 @@ const rw=await p.evaluate(()=>{
     notes:document.querySelectorAll('.rwpage .inote').length};
 });
 ok('the page leads with the ring', rw.hero===true);
-ok('the snake is three tapering arcs, not one stroke', rw.arcs===3);
+/* Was `arcs === 3`, which pinned the implementation rather than the property.
+   Three arcs was how the taper happened to be built, and at 140px the two joins
+   between them read as knuckles; the fix was more segments, not fewer, so a test
+   for "exactly three" failed the change that made the thing it guards better.
+   What it means to check is that the body tapers — several arcs, each at least
+   as wide as the one behind it, ending meaningfully thicker than it started. */
+ok('the snake tapers along its body, not one uniform stroke',
+  rw.arcs>=3
+  && rw.widths.every(function(w,i){return i===0||w>=rw.widths[i-1]-0.01;})
+  && rw.widths[rw.widths.length-1]>rw.widths[0]*1.8,
+  rw.arcs+' arcs, '+(rw.widths[0]||0)+'→'+(rw.widths[rw.widths.length-1]||0));
 ok('it has a head', rw.head>=3);
 ok('the ring says what closing today would take', /XP to close today/.test(rw.say));
 ok('quests are tiles', rw.tiles===3);
