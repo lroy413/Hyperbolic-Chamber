@@ -44,7 +44,7 @@ src/                      everything a person wrote
 static/                   copied verbatim into dist/
   _headers                caching + security headers for Cloudflare
 
-tests/                    31 suites + 2 audits, ~989 assertions
+tests/                    31 suites + 2 audits, ~990 assertions
 scripts/                  run-tests.js, serve.js, copy-static.js
 docs/                     decisions.md, status.md, and the older reference docs
 
@@ -170,7 +170,7 @@ MOTION, PATHS, RW, TUTOR, DEPTH, SEARCH, READ, CHEER, BENTO, TEXT, BRAND, DESKTO
 npm install                 # playwright + wrangler; also: npx playwright install chromium
 npm run build               # writes dist/
 npm run serve               # http://localhost:8787 — needed for SW, manifest, install
-npm test                    # all 31 suites, ~989 checks, 15–25 minutes
+npm test                    # all 31 suites, ~990 checks, 15–25 minutes
 npm test 40 42              # just those suites
 npm run audit               # contrast, tap targets, line length, overflow — mobile + desktop
 npm run lint                # validate every course in dist/catalog

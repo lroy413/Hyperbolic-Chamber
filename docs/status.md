@@ -26,7 +26,7 @@ Written at the point development moved into Claude Code. Numbers here are measur
 
 **Design system.** Six type sizes, four weights, three radii plus pills, three elevations, three lit edges, four ink tones, one icon set, one progress ring, one accent per page, mark-generated course covers, a focal home layout, and three celebration moments. Enforced by `tests/test40.js` rather than by discipline.
 
-**Verification.** 31 Playwright suites and two audits. Both audits sit at zero issues across twelve routes, both themes, four viewport widths — contrast, tap targets, text size, overflow and line length.
+**Verification.** 31 Playwright suites and two audits — 990 checks, all passing from a clean clone. Both audits sit at zero issues across twelve routes, both themes, four viewport widths — contrast, tap targets, text size, overflow and line length.
 
 ---
 
